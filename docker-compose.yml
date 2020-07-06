@@ -1,0 +1,11 @@
+version: "2"
+
+services:
+    reverse:
+        container_name: reverse
+        hostname: reverse
+        image: linuxserver/nginx
+        restart: unless-stopped
+        ports:
+            - 80:80
+            - 443:443
