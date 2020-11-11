@@ -1,11 +1,35 @@
 version: "3"
 
 services:
+    reverse-proxy:
+        # The official v2 Traefik docker image
+        image: traefik:v2.3
+        # Enables the web UI and tells Traefik to listen to docker
+        command:
+            - --api.insecure=true
+            - --providers.docker
+            - --providers.docker.exposedbydefault=false
+            - --entrypoints.web.address=:8008
+            - --serverstransport.insecureskipverify=true
+            - --log.filePath=/var/log/traefik.log
+            - --log.level=DEBUG
+        networks: 
+            - proxy-network
+        ports:
+          # The HTTP port
+          - "8008:8008"
+          # The Web UI (enabled by --api.insecure=true)
+          - "8888:8080"
+        volumes:
+          # So that Traefik can listen to the Docker events
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - ${PWD}/traefik/traefik.log:/var/log/traefik.log
+    
     unifi:
-        container_name: unifi
         hostname: unifi
         image: linuxserver/unifi-controller
-        restart: unless-stopped
+        networks: 
+            - proxy-network
         ports:
             - 10001:10001/udp # Required for AP discovery
             - 8880:8880/tcp # Unifi guest portal HTTP redirect port
@@ -18,6 +42,15 @@ services:
             - 1900:1900/udp # Required for Make controller discoverable on L2 network option
         volumes:
             - unifi-config:/config
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.unifi.rule=Host(`unifi.${PROXY_DOMAIN}`)"
+            - traefik.http.services.unifi.loadbalancer.server.port=8443
+            - traefik.http.services.unifi.loadbalancer.server.scheme=https
+            - "traefik.http.routers.unifi.entrypoints=web"
 
 volumes: 
     unifi-config:
+
+networks: 
+    proxy-network:
