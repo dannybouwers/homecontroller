@@ -37,10 +37,25 @@ systemctl start docker
 systemtcl enable docker
 ```
 
+## Set enviropnment variables
+The setup should fetch configuration based on the environment it's running on. I use a virtual test machine and a RaspberyPi as live machine. The following Environment variables sould be set:
+```bash
+export PROXY_WEB_PORT=8008 #port for HTTP connections
+export PROXY_WEBSECURE_PORT=44300 #port for HTTPS connections
+export LE_EMAIL= #e-mail adress for Let's Encrypt
+export TRANSIP_ACCOUNT_NAME= #account name for TransIP account to use LE DNS challenges
+export PROXY_DOMAIN= #main domain to use for services
+```
+
+The TransIP API key file should be stored as `/home/USERNAME/traefik/transip.key`. It can be obtained via [TransIP API-instellingen](https://www.transip.nl/cp/account/api/)
+
+
 ## todo
-- [ ] [Traefik](https://hub.docker.com/_/traefik/)
-- [ ] [Unifi Controller](https://github.com/linuxserver/docker-unifi-controller)
+- [X] [Traefik](https://hub.docker.com/_/traefik/)
+- [X] [Unifi Controller](https://github.com/linuxserver/docker-unifi-controller)
 - [ ] [Plex](https://github.com/linuxserver/docker-plex)
 - [ ] [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome/wiki/Docker)
 - [ ] [Home Assistant](https://www.home-assistant.io/docs/installation/docker/)
 - [ ] [SeaFile](https://download.seafile.com/published/seafile-manual/docker/deploy%20seafile%20with%20docker.md)
+- [ ] Synology Disk Station
+- [ ] Synology Photo Station

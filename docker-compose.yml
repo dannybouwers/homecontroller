@@ -1,4 +1,8 @@
-version: "3"
+version: "3.5"
+
+secrets:
+    transip_key:
+        file: ${PWD}/traefik/transip.key
 
 services:
     reverse-proxy:
@@ -9,25 +13,34 @@ services:
             - --api.insecure=true
             - --providers.docker
             - --providers.docker.exposedbydefault=false
-            - --entrypoints.web.address=:8008
+            - --entrypoints.web.address=:${PROXY_WEB_PORT}
+            - --entrypoints.websecure.address=:${PROXY_WEBSECURE_PORT}
+            - --certificatesresolvers.le.acme.email=${LE_EMAIL}
+            - --certificatesresolvers.le.acme.storage=/acme.json
+            - --certificatesResolvers.le.acme.dnsChallenge.provider=transip
+            - --certificatesResolvers.le.acme.dnsChallenge.delayBeforeCheck=0
             - --serverstransport.insecureskipverify=true
             - --log.filePath=/var/log/traefik.log
             - --log.level=DEBUG
         networks: 
             - proxy-network
         ports:
-          # The HTTP port
-          - "8008:8008"
-          # The Web UI (enabled by --api.insecure=true)
-          - "8888:8080"
+            - ${PROXY_WEB_PORT}:${PROXY_WEB_PORT} #HTTP
+            - ${PROXY_WEBSECURE_PORT}:${PROXY_WEBSECURE_PORT} #HTTPS
+            - 8888:8080 # The Web UI (enabled by --api.insecure=true)
         volumes:
-          # So that Traefik can listen to the Docker events
-          - /var/run/docker.sock:/var/run/docker.sock:ro
-          - ${PWD}/traefik/traefik.log:/var/log/traefik.log
-    
+            - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
+            - ${PWD}/traefik/traefik.log:/var/log/traefik.log
+            - ${PWD}/traefik/acme.json:/acme.json
+        environment:
+            - TRANSIP_ACCOUNT_NAME
+            - TRANSIP_PRIVATE_KEY_PATH=/run/secrets/transip_key
+        secrets:
+            - transip_key
+
     unifi:
         hostname: unifi
-        image: linuxserver/unifi-controller
+        image: linuxserver/unifi-controller:version-6.0.28
         networks: 
             - proxy-network
         ports:
@@ -43,11 +56,13 @@ services:
         volumes:
             - unifi-config:/config
         labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.unifi.rule=Host(`unifi.${PROXY_DOMAIN}`)"
+            - traefik.enable=true
+            - traefik.http.routers.unifi.tls=true
+            - traefik.http.routers.unifi.rule=Host(`unifi.${PROXY_DOMAIN}`)
+            - traefik.http.routers.unifi.tls.certresolver=le
+            - traefik.http.routers.unifi.entrypoints=websecure
             - traefik.http.services.unifi.loadbalancer.server.port=8443
             - traefik.http.services.unifi.loadbalancer.server.scheme=https
-            - "traefik.http.routers.unifi.entrypoints=web"
 
 volumes: 
     unifi-config:
