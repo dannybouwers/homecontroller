@@ -23,7 +23,7 @@ sed -i 's/PermitRootLogin no/PermitRootLogin yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
 ```
 
-Add your public key to USERNAME/.ssh/authorized_keys using an SFTP enebled client
+Add your public key to USERNAME/.ssh/authorized_keys using an SFTP enabled client
 
 Disable SSH for root user
 ```bash
@@ -40,16 +40,18 @@ systemtcl enable docker
 ## Set enviropnment
 The setup should fetch configuration based on the environment it's running on. I use a virtual test machine and a RaspberyPi as live machine. The following Environment variables sould be set:
 ```bash
-export PROXY_WEB_PORT=8008 #port for HTTP connections
-export PROXY_WEBSECURE_PORT=44300 #port for HTTPS connections
+export PROXY_WEB_PORT= #port for HTTP connections
+export PROXY_WEBSECURE_PORT= #port for HTTPS connections
 export LE_EMAIL= #e-mail adress for Let's Encrypt
 export TRANSIP_ACCOUNT_NAME= #account name for TransIP account to use LE DNS challenges
 export PROXY_DOMAIN= #main domain to use for services
 export PROXY_LOCAL_DISKSTATION= #address to reach disstation (used in file provider)
 ```
 
-The TransIP API key file should be stored as `/home/USERNAME/traefik/transip.key`. It can be obtained via [TransIP API-instellingen](https://www.transip.nl/cp/account/api/)
+The TransIP API key file should be stored as `/home/USERNAME/secrets/transip.key`. It can be obtained via [TransIP API-instellingen](https://www.transip.nl/cp/account/api/)
 
+## Prepare for running
+Run the file [setup.sh](setup.sh) to create directories and files mounted by docker compose.
 
 ## todo
 - [X] [Traefik](https://hub.docker.com/_/traefik/)

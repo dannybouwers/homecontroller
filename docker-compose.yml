@@ -2,7 +2,7 @@ version: "3.5"
 
 secrets:
     transip_key:
-        file: ${PWD}/traefik/transip.key
+        file: ${PWD}/secrets/transip.key
 
 networks: 
     proxy-network:
@@ -24,7 +24,6 @@ services:
             - --certificatesresolvers.transip.acme.dnschallenge.resolvers=ns0.transip.net:53,ns1.transip.nl:53,ns2.transip.eu:53,9.9.9.9:53,1.1.1.1:53,8.8.8.8:53 # Use trans IP nameservers or Quad9, Cloudflare or Google 
             - --serverstransport.insecureskipverify=true # Disable check for valid HTTPS certificates of backend sertvices
             - --log.filePath=/var/log/traefik.log
-            - --log.level=DEBUG
         networks: 
             - proxy-network
         ports:
@@ -33,9 +32,9 @@ services:
             - 8888:8080 # The Web UI (enabled by --api.insecure=true)
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
-            - ${PWD}/traefik/traefik.log:/var/log/traefik.log
-            - ${PWD}/traefik/acme.json:/acme.json #certificates
-            - ${PWD}/traefik/dynamic_conf:/dynamic_conf #file provider
+            - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
+            - ${PWD}/data/traefik/acme.json:/acme.json #certificates
+            - ./traefik/dynamic_conf:/dynamic_conf #file provider
         environment:
             - TRANSIP_ACCOUNT_NAME
             - TRANSIP_PRIVATE_KEY_PATH=/run/secrets/transip_key
@@ -60,7 +59,7 @@ services:
             - 3478:3478/udp # Unifi STUN port
             - 1900:1900/udp # Required for Make controller discoverable on L2 network option
         volumes:
-            - ${PWD}/unifi/config:/config
+            - ${PWD}/data/unifi/config:/config
         labels:
             - traefik.enable=true
             - traefik.http.routers.unifi.tls=true
