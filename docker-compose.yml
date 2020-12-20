@@ -32,8 +32,8 @@ services:
             - 8888:8080 # The Web UI (enabled by --api.insecure=true)
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
-            - ${HOME}/data/traefik/traefik.log:/var/log/traefik.log
-            - ${HOME}/data/traefik/acme.json:/acme.json #certificates
+            - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
+            - ${PWD}/data/traefik/acme.json:/acme.json #certificates
             - ./traefik/dynamic_conf:/dynamic_conf #file provider
         environment:
             - TRANSIP_ACCOUNT_NAME
@@ -59,7 +59,7 @@ services:
             - 3478:3478/udp # Unifi STUN port
             - 1900:1900/udp # Required for Make controller discoverable on L2 network option
         volumes:
-            - ${HOME}/data/unifi/config:/config
+            - ${PWD}/data/unifi/config:/config
         environment:
             - PUID=1000
             - PGID=999
