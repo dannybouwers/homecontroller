@@ -1,0 +1,17 @@
+http:
+  # Route requests withoud subdomain. In my case, everything to the Diskstation
+  routers:
+    webstation:
+      entryPoints:
+        - websecure
+      service: webstation
+      rule: Host(`{{env "PROXY_DOMAIN"}}`)
+      tls:
+        certresolver: transip
+
+  # Add a service for the Synolofy Diskstation
+  services:
+    webstation:
+      loadBalancer:
+        servers:
+          - url: https://{{env "PROXY_LOCAL_DISKSTATION"}}/
