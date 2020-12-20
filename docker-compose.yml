@@ -60,6 +60,9 @@ services:
             - 1900:1900/udp # Required for Make controller discoverable on L2 network option
         volumes:
             - ${PWD}/data/unifi/config:/config
+        environment:
+            - PUID=1000
+            - PGID=999
         labels:
             - traefik.enable=true
             - traefik.http.routers.unifi.tls=true

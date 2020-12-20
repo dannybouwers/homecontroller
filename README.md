@@ -1,20 +1,20 @@
 # homecontroller
-Personal project to move all tools on my RaspberryPi to Docker. [Photos OS](https://github.com/vmware/photon) is used as host OS (due to minimal footprint and security focus). Docker will be running in [swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/) to keep the number of installed packages as low as possible while I can still use compose files with [Docker stack](https://docs.docker.com/engine/reference/commandline/stack/).
+Personal project to move all tools on my RaspberryPi to Docker. [Photos OS](https://github.com/vmware/photon) is used as host OS (due to minimal footprint and security focus). Docker will be running in [swarm mode](https://docs.docker.com/engine/swarm/swarm-tutorial/) to keep the number of installed packages as low as possible (i.e. no Python for Docker Compose) while I can still use compose files with [Docker stack](https://docs.docker.com/engine/reference/commandline/stack/).
 
 ## Configure Photon OS (in VirtualBox)
-For optimal security, I don't want to expose the root user to SSH and only create SSH enabled users without password (but with keys). To do this in Photon OS 3.0:
+For optimal security, I don't want to expose the root user to SSH and only create SSH enabled users without password (but with keys). To do this in Photon OS:
 
 Login as root and create a user
 ```bash
-useradd -m -G sudo USERNAME
-usermod -aG docker USERNAME
+useradd -m -G sudo,docker USERNAME
+
 mkdir /home/USERNAME/.ssh
-cd /home/USERNAME
-chmod 700 ./.ssh
-chown -R USERNAME:users ./.ssh/
-cd ./.ssh
-touch authorized_keys
-chmod 600 authorized_keys
+chmod 700 /home/USERNAME/.ssh
+
+touch /home/USERNAME/.ssh/authorized_keys
+chmod 600 /home/USERNAME/.ssh/authorized_keys
+
+chown -R USERNAME:users /home/USERNAME/.ssh
 ```
 
 Tempory enable SSH for the root user
@@ -34,7 +34,8 @@ systemctl restart sshd
 Start docker
 ```bash
 systemctl start docker
-systemtcl enable docker
+systemctl enable docker #enable Docker
+docker swarm init #run Docker in Swarm mode
 ```
 
 ## Set enviropnment
