@@ -38,7 +38,7 @@ systemctl enable docker #enable Docker
 docker swarm init #run Docker in Swarm mode
 ```
 
-## Set enviropnment
+## Set environment
 The setup should fetch configuration based on the environment it's running on. I use a virtual test machine and a RaspberyPi as live machine. The following Environment variables sould be set:
 ```bash
 export PROXY_WEB_PORT= #port for HTTP connections
@@ -46,7 +46,7 @@ export PROXY_WEBSECURE_PORT= #port for HTTPS connections
 export LE_EMAIL= #e-mail adress for Let's Encrypt
 export TRANSIP_ACCOUNT_NAME= #account name for TransIP account to use LE DNS challenges
 export PROXY_DOMAIN= #main domain to use for services
-export PROXY_LOCAL_DISKSTATION= #address to reach disstation (used in file provider)
+export PROXY_LOCAL_DISKSTATION= #address to reach diskstation (used in file provider)
 ```
 
 The TransIP API key file should be stored as `/home/USERNAME/secrets/transip.key`. It can be obtained via [TransIP API-instellingen](https://www.transip.nl/cp/account/api/)
