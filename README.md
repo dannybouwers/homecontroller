@@ -6,7 +6,7 @@ To install Docker and Docker-Compose, community repositories should be enabled. 
 
 Install and start docker:
 ```bash
-apk upgrade # update package list since community repository is added
+apk update # update package list since community repository is added
 apk add docker docker-compose # install docker and docker compose
 rc-update add docker boot # configure docker to start at boot
 service docker start # start docker
