@@ -43,10 +43,11 @@ services:
             - transip_key
         labels:
             # Dashboard
-            - "traefik.http.routers.traefik.rule=Host(`traefik.${PROXY_DOMAIN}`)"
-            - "traefik.http.routers.traefik.service=api@internal"
-            - "traefik.http.routers.traefik.tls.certresolver=transip"
-            - "traefik.http.routers.traefik.entrypoints=websecure"
+            - traefik.enable=true
+            - traefik.http.routers.traefik.rule=Host(`traefik.${PROXY_DOMAIN}`)
+            - traefik.http.routers.traefik.service=api@internal
+            - traefik.http.routers.traefik.tls.certresolver=transip
+            - traefik.http.routers.traefik.entrypoints=websecure
 
     unifi:
         hostname: unifi
