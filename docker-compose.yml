@@ -9,9 +9,9 @@ networks:
 
 services:
     reverse-proxy:
-        image: traefik:v2.3 # The official v2 Traefik docker image
+        image: traefik:v2.4.7
         command:
-            - --api.insecure=true # Enables the web UI
+            - --api # Secure API
             - --providers.docker # Tells Traefik to listen to docker
             - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
             - --providers.file.directory=/dynamic_conf # File provider
@@ -29,7 +29,6 @@ services:
         ports:
             - ${PROXY_WEB_PORT}:${PROXY_WEB_PORT} # HTTP
             - ${PROXY_WEBSECURE_PORT}:${PROXY_WEBSECURE_PORT} # HTTPS
-            - 8888:8080 # The Web UI (enabled by --api.insecure=true)
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
             - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
@@ -42,10 +41,16 @@ services:
             - PROXY_LOCAL_DISKSTATION
         secrets:
             - transip_key
+        labels:
+            # Dashboard
+            - "traefik.http.routers.traefik.rule=Host(`traefik.${PROXY_DOMAIN}`)"
+            - "traefik.http.routers.traefik.service=api@internal"
+            - "traefik.http.routers.traefik.tls.certresolver=transip"
+            - "traefik.http.routers.traefik.entrypoints=websecure"
 
     unifi:
         hostname: unifi
-        image: linuxserver/unifi-controller:version-6.0.28
+        image: linuxserver/unifi-controller:version-6.0.45
         networks: 
             - proxy-network
         ports:
