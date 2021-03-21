@@ -67,8 +67,8 @@ services:
         volumes:
             - ${PWD}/data/unifi/config:/config
         environment:
-            - PUID=1000
-            - PGID=999
+            - PUID=${DOCKER_USER_ID}
+            - PGID=${DOCKER_GROUP_ID}
         labels:
             - traefik.enable=true
             - traefik.http.routers.unifi.tls=true
