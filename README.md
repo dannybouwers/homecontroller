@@ -38,15 +38,18 @@ service sshd restart
 ```
 
 ## Set environment
-The setup should fetch configuration based on the environment it's running on. I use a virtual test machine and a RaspberyPi as live machine. The following Environment variables sould be set:
-```bash
-export PROXY_WEB_PORT= #port for HTTP connections
-export PROXY_WEBSECURE_PORT= #port for HTTPS connections
-export LE_EMAIL= #e-mail adress for Let's Encrypt
-export TRANSIP_ACCOUNT_NAME= #account name for TransIP account to use LE DNS challenges
-export PROXY_DOMAIN= #main domain to use for services
-export PROXY_LOCAL_DISKSTATION= #address to reach diskstation (used in file provider)
-```
+The setup uses the following environment variables. These can be set using [docker-compose supported methods](https://docs.docker.com/compose/environment-variables/). I have configured them in my IC/CD pipeline.
+
+| variable | description |
+| -------- | ----------- |
+| PROXY_WEB_PORT | port for HTTP connections |
+| PROXY_WEBSECURE_PORT | port for HTTPS connections |
+| LE_EMAIL | e-mail adress for Let's Encrypt |
+| TRANSIP_ACCOUNT_NAME | account name for TransIP account to use LE DNS challenges |
+| PROXY_DOMAIN | main domain to use for services |
+| PROXY_LOCAL_DISKSTATION | address to reach diskstation (used in file provider) |
+| DOCKER_USER_ID | ID of the user that should own files created by containers (used by images by linuxserver.io) |
+| DOCKER_GROUP_ID | ID of the group that should own files created by containers (used by images by linuxserver.io) |
 
 The TransIP API key file should be stored as `/home/USERNAME/secrets/transip.key`. It can be obtained via [TransIP API-instellingen](https://www.transip.nl/cp/account/api/)
 
