@@ -9,7 +9,7 @@ networks:
 
 services:
     reverse-proxy:
-        image: traefik:v2.4.8
+        image: traefik:v2.4.7
         command:
             - --api # Secure API
             - --providers.docker # Tells Traefik to listen to docker
@@ -51,7 +51,7 @@ services:
 
     unifi:
         hostname: unifi
-        image: linuxserver/unifi-controller:version-6.1.71
+        image: linuxserver/unifi-controller:version-6.0.45
         networks: 
             - proxy-network
         ports:
