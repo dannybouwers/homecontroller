@@ -48,6 +48,7 @@ The setup uses the following environment variables. These can be set using [dock
 | TRANSIP_ACCOUNT_NAME | account name for TransIP account to use LE DNS challenges |
 | PROXY_DOMAIN | main domain to use for services |
 | PROXY_LOCAL_DISKSTATION | address to reach diskstation (used in file provider) |
+| PROXY_WHITELIST | Allowed IPs for Traefik dashboard (default 127.0.0.1) |
 | DOCKER_USER_ID | ID of the user that should own files created by containers (used by images by linuxserver.io) |
 | DOCKER_GROUP_ID | ID of the group that should own files created by containers (used by images by linuxserver.io) |
 

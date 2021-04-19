@@ -48,6 +48,8 @@ services:
             - traefik.http.routers.traefik.service=api@internal
             - traefik.http.routers.traefik.tls.certresolver=transip
             - traefik.http.routers.traefik.entrypoints=websecure
+            - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-127.0.0.1}
+            - traefik.http.routers.traefik.middlewares=traefik-ipwhitelist
 
     unifi:
         hostname: unifi
