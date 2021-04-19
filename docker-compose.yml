@@ -48,8 +48,15 @@ services:
             - traefik.http.routers.traefik.service=api@internal
             - traefik.http.routers.traefik.tls.certresolver=transip
             - traefik.http.routers.traefik.entrypoints=websecure
+            # IP Whitelist
             - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-127.0.0.1}
             - traefik.http.routers.traefik.middlewares=traefik-ipwhitelist
+            # middleware redirect
+            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+            # global redirect to https
+            - "traefik.http.routers.non-https.rule=hostregexp(`{host:.+}`)"
+            - "traefik.http.routers.non-https.entrypoints=web"
+            - "traefik.http.routers.non-https.middlewares=redirect-to-https"
 
     unifi:
         hostname: unifi
