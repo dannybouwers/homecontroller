@@ -8,8 +8,10 @@ networks:
     proxy-network:
 
 services:
-    reverse-proxy:
+    traefik:
+        hostname: traefik
         image: traefik:v2.4.8
+        container_name: traefik-proxy
         command:
             - --api # Secure API
             - --providers.docker # Tells Traefik to listen to docker
@@ -45,11 +47,11 @@ services:
             # IP Whitelist
             - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-127.0.0.1}
             # middleware redirect
-            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+            - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
             # global redirect to https
-            - "traefik.http.routers.non-https.rule=hostregexp(`{host:.+}`)"
-            - "traefik.http.routers.non-https.entrypoints=web"
-            - "traefik.http.routers.non-https.middlewares=redirect-to-https"
+            - traefik.http.routers.non-https.rule=hostregexp(`{host:.+}`)
+            - traefik.http.routers.non-https.entrypoints=web
+            - traefik.http.routers.non-https.middlewares=redirect-to-https
             # Dashboard
             - traefik.enable=true
             - traefik.http.routers.traefik.rule=Host(`traefik.${PROXY_DOMAIN}`)
