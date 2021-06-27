@@ -8,8 +8,10 @@ networks:
     proxy-network:
 
 services:
-    reverse-proxy:
-        image: traefik:v2.4.7
+    traefik:
+        hostname: traefik
+        image: traefik:v2.4.8
+        container_name: traefik-proxy
         command:
             - --api # Secure API
             - --providers.docker # Tells Traefik to listen to docker
@@ -42,38 +44,44 @@ services:
         secrets:
             - transip_key
         labels:
+            # IP Whitelist
+            - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-127.0.0.1}
+            # middleware redirect
+            - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+            # global redirect to https
+            - traefik.http.routers.non-https.rule=hostregexp(`{host:.+}`)
+            - traefik.http.routers.non-https.entrypoints=web
+            - traefik.http.routers.non-https.middlewares=redirect-to-https
             # Dashboard
             - traefik.enable=true
             - traefik.http.routers.traefik.rule=Host(`traefik.${PROXY_DOMAIN}`)
             - traefik.http.routers.traefik.service=api@internal
             - traefik.http.routers.traefik.tls.certresolver=transip
             - traefik.http.routers.traefik.entrypoints=websecure
+            - traefik.http.routers.traefik.middlewares=traefik-ipwhitelist
 
     unifi:
         hostname: unifi
-        image: linuxserver/unifi-controller:version-6.0.45
+        image: ghcr.io/linuxserver/unifi-controller:version-6.1.71
+        container_name: unifi-controller
         networks: 
             - proxy-network
         ports:
-            - 10001:10001/udp # Required for AP discovery
-            - 8880:8880/tcp # Unifi guest portal HTTP redirect port
-            - 8843:8843/tcp # Unifi guest portal HTTPS redirect port
-            - 8443:8443/tcp # Unifi web admin port
-            - 8080:8080/tcp # Required for device communication
-            - 6789:6789/tcp # For mobile throughput test
-            - 5514:5514/tcp # Remote syslog port
             - 3478:3478/udp # Unifi STUN port
-            - 1900:1900/udp # Required for Make controller discoverable on L2 network option
+            - 10001:10001/udp # Required for AP discovery
+            - 8080:8080 # Required for device communication
+            - 8443:8443 # Unifi web admin port
         volumes:
             - ${PWD}/data/unifi/config:/config
         environment:
-            - PUID=1000
-            - PGID=999
+            - PUID=${DOCKER_USER_ID}
+            - PGID=${DOCKER_GROUP_ID}
         labels:
             - traefik.enable=true
             - traefik.http.routers.unifi.tls=true
             - traefik.http.routers.unifi.rule=Host(`unifi.${PROXY_DOMAIN}`)
             - traefik.http.routers.unifi.tls.certresolver=transip
             - traefik.http.routers.unifi.entrypoints=websecure
+            - traefik.http.routers.unifi.middlewares=traefik-ipwhitelist
             - traefik.http.services.unifi.loadbalancer.server.port=8443
             - traefik.http.services.unifi.loadbalancer.server.scheme=https
