@@ -85,3 +85,24 @@ services:
             - traefik.http.routers.unifi.middlewares=traefik-ipwhitelist
             - traefik.http.services.unifi.loadbalancer.server.port=8443
             - traefik.http.services.unifi.loadbalancer.server.scheme=https
+
+    adguard:
+        hostname: adguard
+        image: adguard/adguardhome:v0.106.3
+        container-name: adguard-home
+        networks: 
+            - proxy-network
+        ports:
+            - 53:53 #plain DNS
+        volumes:
+            - ${PWD}/data/adguard/work:/opt/adguardhome/work
+            - ${PWD}/data/adguard/conf:/opt/adguardhome/conf
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.adguard.tls=true
+            - traefik.http.routers.adguard.rule=Host(`unifi.${PROXY_DOMAIN}`)
+            - traefik.http.routers.adguard.tls.certresolver=transip
+            - traefik.http.routers.adguard.entrypoints=websecure
+            - traefik.http.routers.adguard.middlewares=traefik-ipwhitelist
+            - traefik.http.services.adguard.loadbalancer.server.port=3000
+            - traefik.http.services.adguard.loadbalancer.server.scheme=https
