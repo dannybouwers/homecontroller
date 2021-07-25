@@ -89,7 +89,7 @@ services:
     adguard:
         hostname: adguard
         image: adguard/adguardhome:v0.106.3
-        container-name: adguard-home
+        container_name: adguard-home
         networks: 
             - proxy-network
         ports:
