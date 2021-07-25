@@ -100,7 +100,7 @@ services:
         labels:
             - traefik.enable=true
             - traefik.http.routers.adguard.tls=true
-            - traefik.http.routers.adguard.rule=Host(`unifi.${PROXY_DOMAIN}`)
+            - traefik.http.routers.adguard.rule=Host(`adguard.${PROXY_DOMAIN}`)
             - traefik.http.routers.adguard.tls.certresolver=transip
             - traefik.http.routers.adguard.entrypoints=websecure
             - traefik.http.routers.adguard.middlewares=traefik-ipwhitelist
