@@ -5,6 +5,7 @@ Personal project to move all tools on my RaspberryPi to Docker. [Alpine Linux](h
 To install Docker and Docker-Compose, community repositories should be enabled. Edit the file `/etc/apk/repositories` using an editor (e.g. vi) and uncomment the line that points to the "community" directory (i.e. `https://<mirror-server>/alpine/<version>/community`).
 
 <details><summary>Install and start docker:</summary>
+
 ```bash
 apk update # update package list since community repository is added
 apk add docker docker-compose # install docker and docker compose
@@ -16,6 +17,7 @@ service docker start # start docker
 For optimal security, I don't want to expose the root user to SSH and only create SSH enabled users without password (but with keys).
 
 <details><summary>To do this:</summary>
+
 Login on the server as root and create a user
 ```bash
 adduser USERNAME
@@ -44,6 +46,7 @@ service sshd restart
 Fail2Ban scans log files like and bans IP addresses that make too many password failures. It updates firewall rules to reject the IP address. 
 
 <details><summary>Install and start fail2ban:</summary>
+
 ```bash
 apk add fail2ban #install fail2ban package
 rc-update add fail2ban #Enable the fail2ban service so that it starts at boot
@@ -52,6 +55,7 @@ rc-update add fail2ban #Enable the fail2ban service so that it starts at boot
 </details>
 
 <details><summary>Add a jail to fail2ban to block failed login attempts with public keys:</summary>
+
 ```bash
 cat > /etc/fail2ban/filter.d/alpine-sshd-key.conf <<EOF
 # Fail2Ban filter for openssh for Alpine
@@ -100,6 +104,7 @@ apk add ufw
 ```
 
 <details><summary>For best security, block all incoming traffic by default and open ports once you need them to be open:</summary>
+
 ```bash
 ufw default deny incoming # block incoming by default
 ufw default allow outgoing # allow all outgoing
