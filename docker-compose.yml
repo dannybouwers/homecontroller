@@ -70,7 +70,6 @@ services:
             - 3478:3478/udp # Unifi STUN port
             - 10001:10001/udp # Required for AP discovery
             - 8080:8080 # Required for device communication
-            - 8443:8443 # Unifi web admin port
         volumes:
             - ${PWD}/data/unifi/config:/config
         environment:
@@ -93,9 +92,8 @@ services:
         networks: 
             - proxy-network
         ports:
-            - 53:53/tcp #plain DNS
-            - 53:53/udp #plain DNS
-            - 3000:3000/tcp #admin panel
+            - 53:53/tcp # plain DNS
+            - 53:53/udp # plain DNS
         volumes:
             - ${PWD}/data/adguard/work:/opt/adguardhome/work
             - ${PWD}/data/adguard/conf:/opt/adguardhome/conf
