@@ -93,7 +93,9 @@ services:
         networks: 
             - proxy-network
         ports:
-            - 53:53 #plain DNS
+            - 53:53/tcp #plain DNS
+            - 53:53/udp #plain DNS
+            - 3000:3000/tcp #admin panel
         volumes:
             - ${PWD}/data/adguard/work:/opt/adguardhome/work
             - ${PWD}/data/adguard/conf:/opt/adguardhome/conf
@@ -105,4 +107,4 @@ services:
             - traefik.http.routers.adguard.entrypoints=websecure
             - traefik.http.routers.adguard.middlewares=traefik-ipwhitelist
             - traefik.http.services.adguard.loadbalancer.server.port=3000
-            - traefik.http.services.adguard.loadbalancer.server.scheme=https
+            - traefik.http.services.adguard.loadbalancer.server.scheme=http
