@@ -4,15 +4,19 @@ Personal project to move all tools on my RaspberryPi to Docker. [Alpine Linux](h
 ## Configure Alpine Linux
 To install Docker and Docker-Compose, community repositories should be enabled. Edit the file `/etc/apk/repositories` using an editor (e.g. vi) and uncomment the line that points to the "community" directory (i.e. `https://<mirror-server>/alpine/<version>/community`).
 
-Install and start docker:
+<details><summary>Install and start docker:</summary>
+
 ```bash
 apk update # update package list since community repository is added
 apk add docker docker-compose # install docker and docker compose
 rc-update add docker boot # configure docker to start at boot
 service docker start # start docker
 ```
+</details>
 
-For optimal security, I don't want to expose the root user to SSH and only create SSH enabled users without password (but with keys). To do this:
+For optimal security, I don't want to expose the root user to SSH and only create SSH enabled users without password (but with keys).
+
+<details><summary>To do this:</summary>
 
 Login on the server as root and create a user
 ```bash
@@ -36,18 +40,22 @@ sed -i 's|^.\?\+PasswordAuthentication yes$|PasswordAuthentication no|g' /etc/ss
 sed -i 's|^PermitRootLogin yes$|PermitRootLogin no|g' /etc/ssh/sshd_config # disable SSH access for root user
 service sshd restart
 ```
+</details>
 
 ## Setup fail2ban
 Fail2Ban scans log files like and bans IP addresses that make too many password failures. It updates firewall rules to reject the IP address. 
 
-Install and start fail2ban:
+<details><summary>Install and start fail2ban:</summary>
+
 ```bash
 apk add fail2ban #install fail2ban package
 rc-update add fail2ban #Enable the fail2ban service so that it starts at boot
 /etc/init.d/fail2ban start #Start the fail2ban service immediately and create configuration files
 ```
+</details>
 
-Add a jail to fail2ban to block failed login attempts with public keys:
+<details><summary>Add a jail to fail2ban to block failed login attempts with public keys:</summary>
+
 ```bash
 cat > /etc/fail2ban/filter.d/alpine-sshd-key.conf <<EOF
 # Fail2Ban filter for openssh for Alpine
@@ -87,6 +95,26 @@ EOF
 
 /etc/init.d/fail2ban restart
 ```
+</details>
+
+## Setup firewall
+The most easy way to setup a firewall, is by making use of UFW (Uncomplicated Firewall). Luckily, it's available for Alpine Linux:
+```bash
+apk add ufw
+```
+
+<details><summary>For best security, block all incoming traffic by default and open ports once you need them to be open:</summary>
+
+```bash
+ufw default deny incoming # block incoming by default
+ufw default allow outgoing # allow all outgoing
+ufw allow ssh # allow ssh, to enable remote management
+ufw allow https # allow https, that's where we'll find all proxied services
+ufw allow http # allow http, so Traefik can be reached to redirect traffic to https
+ufw allow from 192.168.0.0/16 # allow any traffic form LAN, e.g. for Unifi and AdGuard
+ufw enable # enable the firewall
+```
+</details>
 
 ## Set environment
 The setup uses the following environment variables. These can be set using [docker-compose supported methods](https://docs.docker.com/compose/environment-variables/). I have configured them in my IC/CD pipeline.
@@ -99,7 +127,7 @@ The setup uses the following environment variables. These can be set using [dock
 | TRANSIP_ACCOUNT_NAME | account name for TransIP account to use LE DNS challenges |
 | PROXY_DOMAIN | main domain to use for services |
 | PROXY_LOCAL_DISKSTATION | address to reach diskstation (used in file provider) |
-| PROXY_WHITELIST | Allowed IPs for Traefik dashboard (default 127.0.0.1) |
+| PROXY_WHITELIST | Allowed IPs for Traefik dashboard and service admin panels (default 127.0.0.1) |
 | DOCKER_USER_ID | ID of the user that should own files created by containers (used by images by linuxserver.io) |
 | DOCKER_GROUP_ID | ID of the group that should own files created by containers (used by images by linuxserver.io) |
 
@@ -112,11 +140,11 @@ Run the file [setup.sh](setup.sh) to create directories and files mounted by doc
 - [X] [Traefik](https://hub.docker.com/_/traefik/)
 - [X] [Unifi Controller](https://github.com/linuxserver/docker-unifi-controller)
 - [ ] [Plex](https://github.com/linuxserver/docker-plex)
-- [ ] [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome/wiki/Docker)
+- [X] [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome/wiki/Docker)
 - [ ] [Home Assistant](https://www.home-assistant.io/docs/installation/docker/)
 - [ ] [SeaFile](https://download.seafile.com/published/seafile-manual/docker/deploy%20seafile%20with%20docker.md)
 - [X] Synology Disk Station
 - [X] Synology Photo Station
 - [X] fail2ban
-- [ ] [bitwarden_rs](https://github.com/dani-garcia/bitwarden_rs)
+- [ ] [vaultwarden](https://github.com/dani-garcia/vaultwarden)
 - [ ] automated test
