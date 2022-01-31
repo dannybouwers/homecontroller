@@ -24,7 +24,7 @@ services:
             - --certificatesresolvers.transip.acme.storage=/acme.json
             - --certificatesResolvers.transip.acme.dnsChallenge.provider=transip
             - --certificatesResolvers.transip.acme.dnsChallenge.delayBeforeCheck=300
-            - --certificatesresolvers.transip.acme.dnschallenge.resolvers=ns0.transip.net:53,ns1.transip.nl:53,ns2.transip.eu:53,9.9.9.9:53,1.1.1.1:53,8.8.8.8:53 # Use trans IP nameservers or Quad9, Cloudflare or Google 
+            - --certificatesresolvers.transip.acme.dnschallenge.resolvers=9.9.9.9:53,1.1.1.1:53,8.8.8.8:53
             - --serverstransport.insecureskipverify=true # Disable check for valid HTTPS certificates of backend services
             - --log.filePath=/var/log/traefik.log
         networks: 
