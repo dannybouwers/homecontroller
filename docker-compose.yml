@@ -10,7 +10,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:v2.4.8
+        image: traefik:v2.6.1
         restart: unless-stopped
         container_name: traefik-proxy
         command:
@@ -89,7 +89,7 @@ services:
 
     adguard:
         hostname: adguard
-        image: adguard/adguardhome:v0.106.3
+        image: adguard/adguardhome:v0.107.3
         restart: unless-stopped
         container_name: adguard-home
         networks: 
