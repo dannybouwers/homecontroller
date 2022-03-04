@@ -29,6 +29,9 @@ services:
             - --log.filePath=/var/log/traefik.log
         networks: 
             - proxy-network
+        dns:
+            - 1.1.1.1
+            - 1.0.0.1
         ports:
             - ${PROXY_WEB_PORT}:${PROXY_WEB_PORT} # HTTP
             - ${PROXY_WEBSECURE_PORT}:${PROXY_WEBSECURE_PORT} # HTTPS
