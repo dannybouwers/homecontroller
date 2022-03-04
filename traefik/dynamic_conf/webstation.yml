@@ -7,7 +7,7 @@ http:
       service: webstation
       rule: Host(`{{env "PROXY_DOMAIN"}}`)
       tls:
-        certresolver: transip
+        certresolver: cloudflare
 
   # Add a service for the Synolofy Diskstation
   services:

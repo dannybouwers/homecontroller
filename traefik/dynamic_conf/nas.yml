@@ -7,7 +7,7 @@ http:
       service: nas
       rule: Host(`nas.{{env "PROXY_DOMAIN"}}`)
       tls:
-        certresolver: transip
+        certresolver: cloudflare
 
   # Add the service for Synology DSM
   services:
