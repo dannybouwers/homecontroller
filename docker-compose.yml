@@ -6,7 +6,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:{$TAG_TRAEFIK:-latest}
+        image: traefik:${TAG_TRAEFIK:-latest}
         restart: unless-stopped
         container_name: traefik-proxy
         command:
@@ -64,7 +64,7 @@ services:
 
     unifi:
         hostname: unifi
-        image: linuxserver/unifi-controller:{$TAG_UNIFI:-latest}
+        image: linuxserver/unifi-controller:${TAG_UNIFI:-latest}
         restart: unless-stopped
         container_name: unifi-controller
         networks: 
@@ -90,7 +90,7 @@ services:
 
     adguard:
         hostname: adguard
-        image: adguard/adguardhome:{$TAG_ADGUARD:-latest}
+        image: adguard/adguardhome:${TAG_ADGUARD:-latest}
         restart: unless-stopped
         container_name: adguard-home
         networks: 
