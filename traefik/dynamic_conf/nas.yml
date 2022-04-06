@@ -10,6 +10,13 @@ http:
         certresolver: cloudflare
       middlewares: "redirect-mailstation"
 
+  # rewrite for mail station
+  middlewares:
+    redirect-mailstation:
+      redirectRegex:
+        regex: "^https://nas.${PROXY_DOMAIN}/mail/(.*)"
+        replacement: "http://web.${PROXY_DOMAIN}/mail/${1}"
+
   # Add the service for Synology DSM
   services:
     nas:
