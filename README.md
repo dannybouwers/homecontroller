@@ -6,25 +6,24 @@ Personal project to move all tools on my home server to Docker. [Alpine Linux](h
 
 ## (Optional) Host security
 [Setup fail2ban](https://github.com/dannybouwers/homecontroller/wiki/Setup-fail2ban)
+
 [Setup firewall](https://github.com/dannybouwers/homecontroller/wiki/Setup-firewall)
 
 ## Set environment
 The setup uses the following environment variables. These can be set using [docker-compose supported methods](https://docs.docker.com/compose/environment-variables/). I have configured them in my CI/CD pipeline.
 
-| variable | description |
-| -------- | ----------- |
-| PROXY_WEB_PORT | port for HTTP connections |
-| PROXY_WEBSECURE_PORT | port for HTTPS connections |
-| LE_EMAIL | e-mail adress for Let's Encrypt |
-| TRANSIP_ACCOUNT_NAME | account name for TransIP account to use LE DNS challenges |
-| PROXY_DOMAIN | main domain to use for services |
-| PROXY_LOCAL_DISKSTATION | address to reach diskstation (used in file provider) |
-| PROXY_WHITELIST | Allowed IPs for Traefik dashboard and service admin panels (default 127.0.0.1) |
-| DOCKER_USER_ID | ID of the user that should own files created by containers (used by images by linuxserver.io) |
-| DOCKER_GROUP_ID | ID of the group that should own files created by containers (used by images by linuxserver.io) |
-| CLOUDFLARE_DNS_API_TOKEN | [Cloudflare API token](https://dash.cloudflare.com/profile/api-tokens) with DNS:Edit permission |
-
-The TransIP API key file should be stored as `/home/USERNAME/secrets/transip.key`. It can be obtained via [TransIP API-instellingen](https://www.transip.nl/cp/account/api/)
+| variable | description | default |
+| -------- | ----------- | ------- |
+| PROXY_WEB_PORT | port for HTTP connections | 80 |
+| PROXY_WEBSECURE_PORT | port for HTTPS connections | 443 |
+| LE_EMAIL | e-mail adress for Let's Encrypt | - |
+| PROXY_DOMAIN | main domain to use for services | - |
+| PROXY_LOCAL_DISKSTATION | address to reach diskstation (used in file provider) | - |
+| PROXY_WEBSTATION_SUBDOMAIN | Subdomain to reach Synology Webstation, Photo Station and Mail station. | www |
+| PROXY_WHITELIST | Allowed IPs for Traefik dashboard and service admin panels | 127.0.0.1 |
+| DOCKER_USER_ID | ID of the user that should own files created by containers (used by images by linuxserver.io) | - |
+| DOCKER_GROUP_ID | ID of the group that should own files created by containers (used by images by linuxserver.io) | - |
+| CLOUDFLARE_DNS_API_TOKEN | [Cloudflare API token](https://dash.cloudflare.com/profile/api-tokens) with DNS:Edit permission | - |
 
 ## Prepare for running
 Run the file [setup.sh](setup.sh) to create directories and files mounted by docker compose.

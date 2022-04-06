@@ -1,11 +1,11 @@
 http:
-  # Route requests withoud subdomain. In my case, everything to the Diskstation
+  # Route requests for webstation, photo station, mail station etc.
   routers:
     webstation:
       entryPoints:
         - websecure
       service: webstation
-      rule: Host(`{{env "PROXY_DOMAIN"}}`)
+      rule: Host(`{{env "PROXY_WEBSTATION_SUBDOMAIN}}.{{env "PROXY_DOMAIN"}}`)
       tls:
         certresolver: cloudflare
 

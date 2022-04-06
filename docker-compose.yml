@@ -41,15 +41,17 @@ services:
             - ${PWD}/data/traefik/acme.json:/acme.json #certificates TransIP
             - ./traefik/dynamic_conf:/dynamic_conf #file provider
         environment:
-            - TRANSIP_ACCOUNT_NAME
             - PROXY_DOMAIN # used in dynamic configuration (file provider)
-            - PROXY_LOCAL_DISKSTATION
+            - PROXY_LOCAL_DISKSTATION # used in dynamic configuration (file provider)
+            - PROXY_WEBSTATION_SUBDOMAIN=${PROXY_WEBSTATION_SUBDOMAIN:-www}
             - CLOUDFLARE_DNS_API_TOKEN
         labels:
             # IP Whitelist
             - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-127.0.0.1}
             # middleware redirect
             - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+            - traefik.http.middlewares.redirect-mailstation.redirectregex.regex=^https://nas.${PROXY_DOMAIN}/mail/(.*)
+            - traefik.http.middlewares.redirect-mailstation.redirectregex.replacement=http://web.${PROXY_DOMAIN}/mail/$${1}
             # global redirect to https
             - traefik.http.routers.non-https.rule=hostregexp(`{host:.+}`)
             - traefik.http.routers.non-https.entrypoints=web
