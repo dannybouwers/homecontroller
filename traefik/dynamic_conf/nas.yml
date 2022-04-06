@@ -14,8 +14,8 @@ http:
   middlewares:
     redirect-mailstation:
       redirectRegex:
-        regex: "^https://nas.${PROXY_DOMAIN}/mail/(.*)"
-        replacement: "http://web.${PROXY_DOMAIN}/mail/${1}"
+        regex: '^https://nas.{{env "PROXY_DOMAIN"}}/mail/(.*)'
+        replacement: 'http://{{env "PROXY_WEBSTATION_SUBDOMAIN"}}.{{env "PROXY_DOMAIN"}}/mail/${1}'
 
   # Add the service for Synology DSM
   services:
