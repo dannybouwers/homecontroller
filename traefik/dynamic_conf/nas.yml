@@ -8,7 +8,7 @@ http:
       rule: Host(`nas.{{env "PROXY_DOMAIN"}}`)
       tls:
         certresolver: cloudflare
-      middlewares: redirect-mailstation
+      middlewares: "redirect-mailstation"
 
   # Add the service for Synology DSM
   services:
