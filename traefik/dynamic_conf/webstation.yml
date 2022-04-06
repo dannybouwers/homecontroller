@@ -5,7 +5,7 @@ http:
       entryPoints:
         - websecure
       service: webstation
-      rule: Host(`{{env "PROXY_WEBSTATION_SUBDOMAIN}}.{{env "PROXY_DOMAIN"}}`)
+      rule: Host(`{{env "PROXY_WEBSTATION_SUBDOMAIN"}}.{{env "PROXY_DOMAIN"}}`)
       tls:
         certresolver: cloudflare
 
