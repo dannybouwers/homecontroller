@@ -110,3 +110,50 @@ services:
             - traefik.http.routers.adguard.middlewares=traefik-ipwhitelist
             - traefik.http.services.adguard.loadbalancer.server.port=3000
             - traefik.http.services.adguard.loadbalancer.server.scheme=http
+
+    vaultwarden:
+        hostname: vaultwarden
+        image: vaultwarden/server:${TAG_VAULTWARDEN:-latest}
+        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        restart: unless-stopped
+        container_name: vaultwarden
+        networks: 
+            - proxy-network
+        environment:
+            - WEBSOCKET_ENABLED=true  # Enable WebSocket notifications.
+            - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN} # Enabling admin page
+            - SIGNUPS_ALLOWED=false # Disable registration of new users
+            - DOMAIN=https://vaultwarden.${PROXY_DOMAIN}
+            # Enable mail via Google
+            - SMTP_HOST=smtp.gmail.com
+            - SMTP_PORT=465
+            - SMTP_SSL=false
+            - SMTP_EXPLICIT_TLS=true
+            - SMTP_USERNAME=${GOOGLE_EMAIL}
+            - SMTP_PASSWORD=${GOOGLE_PASS}
+        volumes:
+            - ${PWD}/data/vaultwarden/data:/data
+        labels:
+            - traefik.enable=true
+            # Entry Point for UI
+            - traefik.http.routers.vaultwarden-ui.tls=true
+            - traefik.http.routers.vaultwarden-ui.tls.certresolver=cloudflare
+            - traefik.http.routers.vaultwarden-ui.service=vaultwarden-ui
+            - traefik.http.routers.vaultwarden-ui.rule=Host(`vaultwarden.${PROXY_DOMAIN}`)
+            - traefik.http.routers.vaultwarden-ui.entrypoints=websecure
+            - traefik.http.services.vaultwarden-ui.loadbalancer.server.port=80
+            # Entry Point for Admin (with IP Whitelist)
+            - traefik.http.routers.vaultwarden-admin.tls=true
+            - traefik.http.routers.vaultwarden-admin.tls.certresolver=cloudflare
+            - traefik.http.routers.vaultwarden-admin.service=vaultwarden-admin
+            - traefik.http.routers.vaultwarden-admin.rule=Host(`vaultwarden.${PROXY_DOMAIN}`) && PathPrefix(`/admin`)
+            - traefik.http.routers.vaultwarden-admin.entrypoints=websecure
+            - traefik.http.routers.vaultwarden-admin.middlewares=traefik-ipwhitelist
+            - traefik.http.services.vaultwarden-admin.loadbalancer.server.port=80
+            # Entry Point for Websocket
+            - traefik.http.routers.vaultwarden-ws.tls=true
+            - traefik.http.routers.vaultwarden-ws.tls.certresolver=cloudflare
+            - traefik.http.routers.vaultwarden-ws.service=vaultwarden-ws
+            - traefik.http.routers.vaultwarden-ws.rule=Host(`vaultwarden.${PROXY_DOMAIN}`) && Path(`/notifications/hub`)
+            - traefik.http.routers.vaultwarden-ws.entrypoints=websecure
+            - traefik.http.services.vaultwarden-ws.loadbalancer.server.port=3012
