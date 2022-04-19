@@ -126,6 +126,7 @@ services:
             - DOMAIN=https://vaultwarden.${PROXY_DOMAIN}
             # Enable mail via Google
             - SMTP_HOST=smtp.gmail.com
+            - SMTP_FROM=${GOOGLE_EMAIL}
             - SMTP_PORT=465
             - SMTP_SSL=false
             - SMTP_EXPLICIT_TLS=true
