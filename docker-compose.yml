@@ -4,6 +4,17 @@ networks:
     proxy-network:
 
 services:
+    portaineragent:
+        hostname: portaineragent
+        image: portainer/agent:latest
+        restart: always
+        container_name: portainer-agent
+        ports:
+            - 9001:9001
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /var/lib/docker/volumes:/var/lib/docker/volumes
+    
     traefik:
         hostname: traefik
         image: traefik:${TAG_TRAEFIK:-latest}
@@ -29,9 +40,6 @@ services:
             - --log.filePath=/var/log/traefik.log
         networks: 
             - proxy-network
-        dns:
-            - 1.1.1.1
-            - 1.0.0.1
         ports:
             - ${PROXY_WEB_PORT:-80}:${PROXY_WEB_PORT:-80} # HTTP
             - ${PROXY_WEBSECURE_PORT:-443}:${PROXY_WEBSECURE_PORT:-443} # HTTPS
