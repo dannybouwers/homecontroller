@@ -1,58 +1,67 @@
 version: "3.5"
 
+secrets:
+    cloudflare_api_token:
+        file: ${HOME}/secrets/cloudflare_api_token
+    google_smtp_pass:
+        file: ${HOME}/secrets/google_smtp_pass
+    vaultwarden_admin_token:
+        file: ${HOME}/secrets/vaultwarden_admin_token
+    
 networks: 
-    proxy-network:
+    public:
+    proxy:
+        internal: true
+
+volumes:
+    traefik-letsencrypt:
+    unifi-config:
+    adguard-work:
+    adguard-conf:
+    vaultwarden-data:
 
 services:
-    portaineragent:
-        hostname: portaineragent
-        image: portainer/agent:latest
-        restart: always
-        container_name: portainer-agent
-        ports:
-            - 9001:9001
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-            - /var/lib/docker/volumes:/var/lib/docker/volumes
-    
     traefik:
         hostname: traefik
-        image: traefik:${TAG_TRAEFIK:-latest}
+        image: traefik:v2.9.5
         restart: unless-stopped
         container_name: traefik-proxy
+        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         command:
             - --api # Secure API
             - --providers.docker # Tells Traefik to listen to docker
             - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
-            - --providers.file.directory=/dynamic_conf # File provider
-            - --entrypoints.web.address=:${PROXY_WEB_PORT:-80}
-            - --entrypoints.websecure.address=:${PROXY_WEBSECURE_PORT:-443}
+            - --providers.file.directory=/homecontroller/dynamic_conf # File provider
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
             # Allow these IPs to set the X-Forwarded-* headers - Cloudflare IPs: https://www.cloudflare.com/ips/
             - --entrypoints.websecure.forwardedHeaders.trustedIPs=173.245.48.0/20,103.21.244.0/22,103.22.200.0/22,103.31.4.0/22,141.101.64.0/18,108.162.192.0/18,190.93.240.0/20,188.114.96.0/20,197.234.240.0/22,198.41.128.0/17,162.158.0.0/15,104.16.0.0/13,104.24.0.0/14,172.64.0.0/13,131.0.72.0/22
             # Let's encrypt with Cloudflare
             - --certificatesresolvers.cloudflare.acme.email=${LE_EMAIL}
-            - --certificatesresolvers.cloudflare.acme.storage=/acme.json
+            - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=90
             
             - --serverstransport.insecureskipverify=true # Disable check for valid HTTPS certificates of backend services
-            - --log.filePath=/var/log/traefik.log
+            - --log.filePath=/homecontroller/traefik.log
         networks: 
-            - proxy-network
+            - public
+            - proxy
         ports:
-            - ${PROXY_WEB_PORT:-80}:${PROXY_WEB_PORT:-80} # HTTP
-            - ${PROXY_WEBSECURE_PORT:-443}:${PROXY_WEBSECURE_PORT:-443} # HTTPS
+            - 80 # HTTP
+            - 443 # HTTPS
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
-            - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
-            - ${PWD}/data/traefik/acme.json:/acme.json #certificates TransIP
-            - ./traefik/dynamic_conf:/dynamic_conf #file provider
+            # - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
+            # - ${PWD}/data/traefik/acme.json:/acme.json #certificates TransIP
+            - traefik-letsencrypt:/letsencrypt
+            - ./traefik:/homecontroller #file provider
         environment:
             - PROXY_DOMAIN # used in dynamic configuration (file provider)
             - PROXY_LOCAL_DISKSTATION # used in dynamic configuration (file provider)
             - PROXY_WEBSTATION_SUBDOMAIN=${PROXY_WEBSTATION_SUBDOMAIN:-www}
-            - CLOUDFLARE_DNS_API_TOKEN
+            - CLOUDFLARE_DNS_API_TOKEN_FILE=/run/secrets/cloudflare_api_token
         labels:
             # IP Whitelist
             - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-127.0.0.1}
@@ -72,17 +81,19 @@ services:
 
     unifi:
         hostname: unifi
-        image: linuxserver/unifi-controller:${TAG_UNIFI:-latest}
+        image: linuxserver/unifi-controller:7.3.76
         restart: unless-stopped
         container_name: unifi-controller
         networks: 
-            - proxy-network
+            - public
+            - proxy
         ports:
             - 3478:3478/udp # Unifi STUN port
             - 10001:10001/udp # Required for AP discovery
             - 8080:8080 # Required for device communication
         volumes:
-            - ${PWD}/data/unifi/config:/config
+            # - ${PWD}/data/unifi/config:/config
+            - unifi-config:/config
         environment:
             - PUID=${DOCKER_USER_ID:-1000}
             - PGID=${DOCKER_GROUP_ID:-1000}
@@ -98,17 +109,21 @@ services:
 
     adguard:
         hostname: adguard
-        image: adguard/adguardhome:${TAG_ADGUARD:-latest}
+        image: adguard/adguardhome:v0.107.19
         restart: unless-stopped
         container_name: adguard-home
+        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         networks: 
-            - proxy-network
+            - public
+            - proxy
         ports:
             - 53:53/tcp # plain DNS
             - 53:53/udp # plain DNS
         volumes:
-            - ${PWD}/data/adguard/work:/opt/adguardhome/work
-            - ${PWD}/data/adguard/conf:/opt/adguardhome/conf
+            # - ${PWD}/data/adguard/work:/opt/adguardhome/work
+            # - ${PWD}/data/adguard/conf:/opt/adguardhome/conf
+            - adguard-work:/opt/adguardhome/work
+            - adguard-conf:/opt/adguardhome/conf
         labels:
             - traefik.enable=true
             - traefik.http.routers.adguard.tls=true
@@ -121,15 +136,16 @@ services:
 
     vaultwarden:
         hostname: vaultwarden
-        image: vaultwarden/server:${TAG_VAULTWARDEN:-latest}
-        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        image: vaultwarden/server:1.25.2
         restart: unless-stopped
         container_name: vaultwarden
-        networks: 
-            - proxy-network
+        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        command: export ADMIN_TOKEN=$(cat /run/secrets/vaultwarden_admin_token) & export SMTP_PASSWORD=$(cat /run/secrets/google_smtp_pass) & /start.sh
+        networks:
+            - proxy
         environment:
             - WEBSOCKET_ENABLED=true  # Enable WebSocket notifications.
-            - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN} # Enabling admin page
+            # - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN} # Enabling admin page
             - SIGNUPS_ALLOWED=false # Disable registration of new users
             - DOMAIN=https://vaultwarden.${PROXY_DOMAIN}
             # Enable mail via Google
@@ -139,9 +155,9 @@ services:
             - SMTP_SSL=false
             - SMTP_EXPLICIT_TLS=true
             - SMTP_USERNAME=${GOOGLE_EMAIL}
-            - SMTP_PASSWORD=${GOOGLE_PASS}
+            # - SMTP_PASSWORD=${GOOGLE_PASS}
         volumes:
-            - ${PWD}/data/vaultwarden/data:/data
+            - vaultwarden-data:/data
         labels:
             - traefik.enable=true
             # Entry Point for UI
