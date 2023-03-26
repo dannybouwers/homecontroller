@@ -14,7 +14,6 @@ networks:
         internal: true
 
 volumes:
-    traefik-letsencrypt:
     unifi-config:
     adguard-work:
     adguard-conf:
@@ -53,10 +52,9 @@ services:
             - 443 # HTTPS
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
-            # - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
-            # - ${PWD}/data/traefik/acme.json:/acme.json #certificates TransIP
-            - traefik-letsencrypt:/letsencrypt
-            - ./traefik:/homecontroller #file provider
+            - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
+            - ${PWD}/data/traefik/acme.json:/acme.json #certificates TransIP
+            - ${PWD}/traefik:/homecontroller #file provider
         environment:
             - PROXY_DOMAIN # used in dynamic configuration (file provider)
             - PROXY_LOCAL_DISKSTATION # used in dynamic configuration (file provider)
@@ -64,7 +62,7 @@ services:
             - CLOUDFLARE_DNS_API_TOKEN_FILE=/run/secrets/cloudflare_api_token
         labels:
             # IP Whitelist
-            - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-127.0.0.1}
+            - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
             # middleware redirect
             - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
             # global redirect to https
