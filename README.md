@@ -10,25 +10,7 @@ Personal project to move all tools on my home server to Docker. [Alpine Linux](h
 [Setup firewall](https://github.com/dannybouwers/homecontroller/wiki/Setup-firewall)
 
 ## Set environment
-The setup uses the following environment variables. These can be set using [docker-compose supported methods](https://docs.docker.com/compose/environment-variables/). I have configured them in my CI/CD pipeline.
-
-| variable | description | default |
-| -------- | ----------- | ------- |
-| PROXY_WEB_PORT | port for HTTP connections | 80 |
-| PROXY_WEBSECURE_PORT | port for HTTPS connections | 443 |
-| PROXY_DOMAIN | main domain to use for services | - |
-| PROXY_LOCAL_DISKSTATION | address to reach diskstation (used in file provider) | - |
-| PROXY_WEBSTATION_SUBDOMAIN | Subdomain to reach Synology Webstation, Photo Station and Mail station. | www |
-| PROXY_WHITELIST | Allowed IPs for Traefik dashboard and service admin panels | 127.0.0.1 |
-| DOCKER_USER_ID | ID of the user that should own files created by containers | - |
-| DOCKER_GROUP_ID | ID of the group that should own files created by containers | - |
-| LE_EMAIL | e-mail address for Let's Encrypt | - |
-| CLOUDFLARE_DNS_API_TOKEN | [Cloudflare API token](https://dash.cloudflare.com/profile/api-tokens) with DNS:Edit permission | - |
-| VAULTWARDEN_ADMIN_TOKEN | Token to authenticate Vautlwarden [admin page](https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page) | - |
-| GOOGLE_EMAIL | Gmail address used to configure mail functions in services | - |
-| GOOGLE_PASS | [App password](https://support.google.com/accounts/answer/185833?hl=en&ref_topic=7189145) for GOOGLE_EMAIL | - |
-
-To specify a specific tag fo a service, the environment variable TAG_SERVICENAME can be used. They will default to latest.
+Create a file called ```.env``` in your working directory and copy the contents of [.env.example](.env.example). Replace the contents with your personal details.
 
 ## Prepare for running
 Run the file [setup.sh](setup.sh) to create directories and files mounted by docker compose.
@@ -36,11 +18,13 @@ Run the file [setup.sh](setup.sh) to create directories and files mounted by doc
 ## todo
 - [X] [Traefik](https://hub.docker.com/_/traefik/)
 - [X] [Unifi Controller](https://github.com/linuxserver/docker-unifi-controller)
-- [ ] [Plex](https://github.com/linuxserver/docker-plex)
 - [X] [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome/wiki/Docker)
 - [X] Synology Disk Station
 - [X] Synology Photo Station
 - [X] fail2ban
 - [X] [vaultwarden](https://github.com/dani-garcia/vaultwarden)
+- [ ] [Plex](https://github.com/linuxserver/docker-plex)
+- [ ] [wg-easy](https://github.com/wg-easy/wg-easy)
+- [ ] semi-automated updates
 - [ ] automated test
 - [ ] [Uptime Kuma](https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install)

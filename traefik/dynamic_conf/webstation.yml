@@ -9,7 +9,7 @@ http:
       tls:
         certresolver: cloudflare
 
-  # Add a service for the Synolofy Diskstation
+  # Add a service for the Synology Diskstation
   services:
     webstation:
       loadBalancer:
