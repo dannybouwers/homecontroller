@@ -12,6 +12,14 @@ Personal project to move all tools on my home server to Docker. [Alpine Linux](h
 ## Set environment
 Create a file called ```.env``` in your working directory and copy the contents of [.env.example](.env.example). Replace the contents with your personal details.
 
+## Create secrets
+Create the following text files in your working directory an fill them with the corresponding secret values:
+```
+/secrets/cloudflare_api_token
+/secrets/google_smtp_pass
+/secrets/vaultwarden_admin_token
+```
+
 ## Prepare for running
 Run the file [setup.sh](setup.sh) to create directories and files mounted by docker compose.
 
@@ -25,6 +33,7 @@ Run the file [setup.sh](setup.sh) to create directories and files mounted by doc
 - [X] [vaultwarden](https://github.com/dani-garcia/vaultwarden)
 - [ ] [Plex](https://github.com/linuxserver/docker-plex)
 - [ ] [wg-easy](https://github.com/wg-easy/wg-easy)
+- [ ] [Firefly III](https://docs.firefly-iii.org/firefly-iii/installation/docker/)
 - [ ] semi-automated updates
 - [ ] automated test
 - [ ] [Uptime Kuma](https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install)

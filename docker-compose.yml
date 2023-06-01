@@ -13,12 +13,6 @@ networks:
     proxy:
         internal: true
 
-volumes:
-    # unifi-config:
-    # adguard-work:
-    # adguard-conf:
-    vaultwarden-data:
-
 services:
     traefik:
         hostname: traefik
@@ -59,6 +53,8 @@ services:
         ports:
             - 80 # HTTP
             - 443 # HTTPS
+        secrets:
+            - cloudflare_api_token
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
             - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
@@ -141,24 +137,24 @@ services:
         restart: unless-stopped
         container_name: vaultwarden
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
-        command: export ADMIN_TOKEN=$(cat /run/secrets/vaultwarden_admin_token) & export SMTP_PASSWORD=$(cat /run/secrets/google_smtp_pass) & /start.sh
         networks:
             - proxy
         environment:
             - WEBSOCKET_ENABLED=true  # Enable WebSocket notifications.
-            # - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN} # Enabling admin page
             - SIGNUPS_ALLOWED=false # Disable registration of new users
             - DOMAIN=https://vaultwarden.${PROXY_DOMAIN}
             # Enable mail via Google
             - SMTP_HOST=smtp.gmail.com
             - SMTP_FROM=${GOOGLE_EMAIL}
             - SMTP_PORT=465
-            - SMTP_SSL=false
-            - SMTP_EXPLICIT_TLS=true
+            - SMTP_SECURITY=force_tls
             - SMTP_USERNAME=${GOOGLE_EMAIL}
-            # - SMTP_PASSWORD=${GOOGLE_PASS}
+        secrets:
+            - google_smtp_pass
+            - vaultwarden_admin_token
         volumes:
-            - vaultwarden-data:/data
+            - ${PWD}/data/vaultwarden/data:/data
+            - ${PWD}/vaultwarden/init.sh:/etc/vaultwarden.sh # script to set sensitive data via Docker secrets
         labels:
             - traefik.enable=true
             # Entry Point for UI
