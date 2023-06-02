@@ -9,9 +9,7 @@ secrets:
         file: ${PWD}/secrets/vaultwarden_admin_token
     
 networks: 
-    public:
-    proxy:
-        internal: true
+    traefik:
 
 services:
     traefik:
@@ -24,7 +22,6 @@ services:
             - --api # Secure API
             - --providers.docker # Tells Traefik to listen to docker
             - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
-            - --providers.docker.network=proxy
             - --providers.file.directory=/homecontroller/dynamic_conf # File provider
             - --entrypoints.web.address=:80
             # Set up an insecure listener that redirects all traffic to TLS
@@ -48,8 +45,7 @@ services:
             - --serverstransport.insecureskipverify=true # Disable check for valid HTTPS certificates of backend services
             - --log.filePath=/homecontroller/traefik.log
         networks: 
-            - public
-            - proxy
+            - traefik
         ports:
             - 80:80 # HTTP
             - 443:443 # HTTPS
@@ -85,8 +81,7 @@ services:
         restart: unless-stopped
         container_name: unifi-controller
         networks: 
-            - public
-            - proxy
+            - traefik
         ports:
             - 3478:3478/udp # Unifi STUN port
             - 10001:10001/udp # Required for AP discovery
@@ -113,8 +108,7 @@ services:
         container_name: adguard-home
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         networks: 
-            - public
-            - proxy
+            - traefik
         ports:
             - 53:53/tcp # plain DNS
             - 53:53/udp # plain DNS
@@ -138,7 +132,7 @@ services:
         container_name: vaultwarden
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         networks:
-            - proxy
+            - traefik
         environment:
             - WEBSOCKET_ENABLED=true  # Enable WebSocket notifications.
             - SIGNUPS_ALLOWED=false # Disable registration of new users
