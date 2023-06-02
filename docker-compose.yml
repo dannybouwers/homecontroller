@@ -51,8 +51,8 @@ services:
             - public
             - proxy
         ports:
-            - 80 # HTTP
-            - 443 # HTTPS
+            - 80:80 # HTTP
+            - 80:443 # HTTPS
         secrets:
             - cloudflare_api_token
         volumes:
