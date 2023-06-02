@@ -38,12 +38,12 @@ services:
             - --entryPoints.websecure.proxyProtocol.trustedIPs=${PROXY_TRUSTEDIPS}
             # Let's encrypt with Cloudflare
             - --certificatesresolvers.cloudflare.acme.email=${LE_EMAIL}
-            - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+            - --certificatesresolvers.cloudflare.acme.storage=/acme.json
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=90
             - --serverstransport.insecureskipverify=true # Disable check for valid HTTPS certificates of backend services
-            - --log.filePath=/homecontroller/traefik.log
+            - --log.filePath=/var/log/traefik.log
         networks: 
             - traefik
         ports:
