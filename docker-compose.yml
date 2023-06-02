@@ -30,7 +30,7 @@ services:
             - --entrypoints.websecure.address=:443
             # Set up the TLS configuration for our websecure listener
             - --entrypoints.websecure.http.tls=true
-            - --entrypoints.websecure.http.tls.certResolver=transip
+            - --entrypoints.websecure.http.tls.certResolver=cloudflare
             - --entrypoints.websecure.http.tls.domains[0].main=${PROXY_DOMAIN}
             - --entrypoints.websecure.http.tls.domains[0].sans=*.${PROXY_DOMAIN}
             # Allow these IPs to set the X-Forwarded-* headers
