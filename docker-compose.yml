@@ -24,12 +24,12 @@ services:
             - --api # Secure API
             - --providers.docker # Tells Traefik to listen to docker
             - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
+            - --providers.docker.network=proxy
             - --providers.file.directory=/homecontroller/dynamic_conf # File provider
             - --entrypoints.web.address=:80
             # Set up an insecure listener that redirects all traffic to TLS
             - --entrypoints.web.http.redirections.entrypoint.to=websecure
             - --entrypoints.web.http.redirections.entrypoint.scheme=https
-
             - --entrypoints.websecure.address=:443
             # Set up the TLS configuration for our websecure listener
             - --entrypoints.websecure.http.tls=true
