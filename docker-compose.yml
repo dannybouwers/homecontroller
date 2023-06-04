@@ -37,6 +37,7 @@ services:
             # Let's encrypt with Cloudflare
             - --certificatesresolvers.cloudflare.acme.email=${LE_EMAIL}
             - --certificatesresolvers.cloudflare.acme.storage=/data/acme.json
+            - --certificatesresolvers.cloudflare.acme.caserver=${LE_CASERVER:-https://acme-v02.api.letsencrypt.org/directory}
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=90
@@ -69,8 +70,9 @@ services:
             - traefik.http.routers.traefik.service=api@internal
             - traefik.http.routers.traefik.middlewares=traefik-ipwhitelist
             # wildcard certificates
-            - traefik.http.routers.traefik.tls.domains[0].main=${PROXY_DOMAIN}
-            - traefik.http.routers.traefik.tls.domains[0].sans=*.${PROXY_DOMAIN}
+            - traefik.http.routers.traefik.tls=true
+            - traefik.http.routers.traefik.tls.certresolver=cloudflare
+            - traefik.http.routers.traefik.tls.domains[0].main=*.${PROXY_DOMAIN}
             # default cert
             - traefik.tls.stores.default.defaultgeneratedcert.resolver=cloudflare
             - traefik.tls.stores.default.defaultgeneratedcert.domain.main=${PROXY_DOMAIN}
