@@ -23,8 +23,8 @@ services:
             - --providers.docker # Tells Traefik to listen to docker
             - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
             - --providers.file.directory=/homecontroller/dynamic_conf # File provider
+            # HHTP entry with redirect to HTTPS
             - --entrypoints.web.address=:80
-            # Set up an insecure listener that redirects all traffic to TLS
             - --entrypoints.web.http.redirections.entrypoint.to=websecure
             - --entrypoints.web.http.redirections.entrypoint.scheme=https
             - --entrypoints.websecure.address=:443
@@ -33,17 +33,18 @@ services:
             - --entrypoints.websecure.http.tls.certResolver=cloudflare
             - --entrypoints.websecure.http.tls.domains[0].main=${PROXY_DOMAIN}
             - --entrypoints.websecure.http.tls.domains[0].sans=*.${PROXY_DOMAIN}
-            # Allow these IPs to set the X-Forwarded-* headers
+            # Allow these IPs to set the X-Forwarded-* headers and proxyProtocol
             - --entrypoints.websecure.forwardedHeaders.trustedIPs=${PROXY_TRUSTEDIPS}
             - --entryPoints.websecure.proxyProtocol.trustedIPs=${PROXY_TRUSTEDIPS}
             # Let's encrypt with Cloudflare
             - --certificatesresolvers.cloudflare.acme.email=${LE_EMAIL}
-            - --certificatesresolvers.cloudflare.acme.storage=/acme.json
+            - --certificatesresolvers.cloudflare.acme.storage=/data/acme.json
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
             - --certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=90
-            - --serverstransport.insecureskipverify=true # Disable check for valid HTTPS certificates of backend services
-            - --log.filePath=/var/log/traefik.log
+            # Disable check for valid HTTPS certificates of backend services
+            - --serverstransport.insecureskipverify=true
+            - --log.filePath=/data/traefik.log
         networks: 
             - traefik
         ports:
@@ -52,10 +53,9 @@ services:
         secrets:
             - cloudflare_api_token
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro # So that Traefik can listen to the Docker events
-            - ${PWD}/data/traefik/traefik.log:/var/log/traefik.log
-            - ${PWD}/data/traefik/acme.json:/acme.json #certificates TransIP
-            - ${PWD}/traefik:/homecontroller #file provider
+            - /var/run/docker.sock:/var/run/docker.sock:ro # docker provider
+            - ${PWD}/traefik:/homecontroller # file provider
+            - ${PWD}/data/traefik:/data # certificates & logs
         environment:
             - PROXY_DOMAIN # used in dynamic configuration (file provider)
             - PROXY_LOCAL_DISKSTATION # used in dynamic configuration (file provider)
@@ -71,9 +71,6 @@ services:
             - traefik.http.routers.traefik.service=api@internal
             - traefik.http.routers.traefik.middlewares=traefik-ipwhitelist
             - traefik.http.routers.traefik.tls.certresolver=cloudflare
-            # wildcard certificates
-            - traefik.http.routers.traefik.tls.domains[0].main=${PROXY_DOMAIN}
-            - traefik.http.routers.traefik.tls.domains[0].sans=*.${PROXY_DOMAIN}
 
     unifi:
         hostname: unifi
