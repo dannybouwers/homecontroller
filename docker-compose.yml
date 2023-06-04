@@ -16,7 +16,7 @@ services:
         hostname: traefik
         image: traefik:v2.9.5
         restart: unless-stopped
-        container_name: traefik-proxy
+        container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         command:
             - --api # Secure API
@@ -27,13 +27,11 @@ services:
             - --entrypoints.web.address=:80
             - --entrypoints.web.http.redirections.entrypoint.to=websecure
             - --entrypoints.web.http.redirections.entrypoint.scheme=https
+            # HTTPS entry
             - --entrypoints.websecure.address=:443
-            # Set up the TLS configuration for our websecure listener
             - --entrypoints.websecure.http.tls=true
-            - --entrypoints.websecure.http.tls.certResolver=cloudflare
-            - --entrypoints.websecure.http.tls.domains[0].main=${PROXY_DOMAIN}
-            - --entrypoints.websecure.http.tls.domains[0].sans=*.${PROXY_DOMAIN}
-            # Allow these IPs to set the X-Forwarded-* headers and proxyProtocol
+            - --entrypoints.websecure.http.tls.certresolver=cloudflare
+             # Allow these IPs to set the X-Forwarded-* headers and proxyProtocol
             - --entrypoints.websecure.forwardedHeaders.trustedIPs=${PROXY_TRUSTEDIPS}
             - --entryPoints.websecure.proxyProtocol.trustedIPs=${PROXY_TRUSTEDIPS}
             # Let's encrypt with Cloudflare
@@ -70,13 +68,22 @@ services:
             - traefik.http.routers.traefik.rule=Host(`traefik.${PROXY_DOMAIN}`)
             - traefik.http.routers.traefik.service=api@internal
             - traefik.http.routers.traefik.middlewares=traefik-ipwhitelist
-            - traefik.http.routers.traefik.tls.certresolver=cloudflare
+            # wildcard certificates
+            - traefik.http.routers.traefik.tls.domains[0].main=${PROXY_DOMAIN}
+            - traefik.http.routers.traefik.tls.domains[0].sans=*.${PROXY_DOMAIN}
+            # default cert
+            - traefik.tls.stores.default.defaultgeneratedcert.resolver=cloudflare
+            - traefik.tls.stores.default.defaultgeneratedcert.domain.main=${PROXY_DOMAIN}
+            - traefik.tls.stores.default.defaultgeneratedcert.domain.sans=*.${PROXY_DOMAIN}
+
 
     unifi:
         hostname: unifi
+        container_name: unifi
         image: linuxserver/unifi-controller:7.2.95
         restart: unless-stopped
-        container_name: unifi-controller
+        depends_on:
+            - traefik
         networks: 
             - traefik
         ports:
@@ -90,9 +97,7 @@ services:
             - PGID=${DOCKER_GROUP_ID:-1000}
         labels:
             - traefik.enable=true
-            - traefik.http.routers.unifi.tls=true
             - traefik.http.routers.unifi.rule=Host(`unifi.${PROXY_DOMAIN}`)
-            - traefik.http.routers.unifi.tls.certresolver=cloudflare
             - traefik.http.routers.unifi.entrypoints=websecure
             - traefik.http.routers.unifi.middlewares=traefik-ipwhitelist
             - traefik.http.services.unifi.loadbalancer.server.port=8443
@@ -100,10 +105,12 @@ services:
 
     adguard:
         hostname: adguard
+        container_name: adguard
         image: adguard/adguardhome:v0.107.18
         restart: unless-stopped
-        container_name: adguard-home
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        depends_on:
+            - traefik
         networks: 
             - traefik
         ports:
@@ -114,9 +121,7 @@ services:
             - ${PWD}/data/adguard/conf:/opt/adguardhome/conf
         labels:
             - traefik.enable=true
-            - traefik.http.routers.adguard.tls=true
             - traefik.http.routers.adguard.rule=Host(`adguard.${PROXY_DOMAIN}`)
-            - traefik.http.routers.adguard.tls.certresolver=cloudflare
             - traefik.http.routers.adguard.entrypoints=websecure
             - traefik.http.routers.adguard.middlewares=traefik-ipwhitelist
             - traefik.http.services.adguard.loadbalancer.server.port=3000
@@ -124,10 +129,12 @@ services:
 
     vaultwarden:
         hostname: vaultwarden
+        container_name: vaultwarden
         image: vaultwarden/server:1.28.1
         restart: unless-stopped
-        container_name: vaultwarden
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        depends_on:
+            - traefik
         networks:
             - traefik
         environment:
@@ -149,23 +156,17 @@ services:
         labels:
             - traefik.enable=true
             # Entry Point for UI
-            - traefik.http.routers.vaultwarden-ui.tls=true
-            - traefik.http.routers.vaultwarden-ui.tls.certresolver=cloudflare
             - traefik.http.routers.vaultwarden-ui.service=vaultwarden-ui
             - traefik.http.routers.vaultwarden-ui.rule=Host(`vaultwarden.${PROXY_DOMAIN}`)
             - traefik.http.routers.vaultwarden-ui.entrypoints=websecure
             - traefik.http.services.vaultwarden-ui.loadbalancer.server.port=80
             # Entry Point for Admin (with IP Whitelist)
-            - traefik.http.routers.vaultwarden-admin.tls=true
-            - traefik.http.routers.vaultwarden-admin.tls.certresolver=cloudflare
             - traefik.http.routers.vaultwarden-admin.service=vaultwarden-admin
             - traefik.http.routers.vaultwarden-admin.rule=Host(`vaultwarden.${PROXY_DOMAIN}`) && PathPrefix(`/admin`)
             - traefik.http.routers.vaultwarden-admin.entrypoints=websecure
             - traefik.http.routers.vaultwarden-admin.middlewares=traefik-ipwhitelist
             - traefik.http.services.vaultwarden-admin.loadbalancer.server.port=80
             # Entry Point for Websocket
-            - traefik.http.routers.vaultwarden-ws.tls=true
-            - traefik.http.routers.vaultwarden-ws.tls.certresolver=cloudflare
             - traefik.http.routers.vaultwarden-ws.service=vaultwarden-ws
             - traefik.http.routers.vaultwarden-ws.rule=Host(`vaultwarden.${PROXY_DOMAIN}`) && Path(`/notifications/hub`)
             - traefik.http.routers.vaultwarden-ws.entrypoints=websecure
