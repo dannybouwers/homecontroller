@@ -8,8 +8,10 @@ http:
       rule: Host(`{{env "PROXY_WEBSTATION_SUBDOMAIN"}}.{{env "PROXY_DOMAIN"}}`)
       tls:
         certresolver: cloudflare
+        domains:
+          - main: '*.{{env "PROXY_DOMAIN"}}'
 
-  # Add a service for the Synolofy Diskstation
+  # Add a service for the Synology Diskstation
   services:
     webstation:
       loadBalancer:

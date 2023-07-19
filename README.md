@@ -1,46 +1,100 @@
 # homecontroller
+
 Personal project to move all tools on my home server to Docker. [Alpine Linux](https://alpinelinux.org/) is used as host OS (due to minimal footprint and security focus). Docker compose is used to manage my local infrastructure in a single file. I use a Linux Container in Proxmox, but it can also run on a Raspberry Pi
 
-## (Optional) configure Alpine Linux
+## features
+
+- Wildcard Let's Encrypt certificates
+- Automated certificate renewal
+- Redirect HTTP to HTTPS for all services
+- IP whitelist protection for admin pages
+- Automated redirect of Synology mailstation and webstation
+- Sensitive Vaultwarden configuration in docker secrets
+
+## Usage
+
+### (Optional) configure Alpine Linux
+
 [Configure Alpine Linux](https://github.com/dannybouwers/homecontroller/wiki/Configure-Alpine-Linux)
 
-## (Optional) Host security
+### (Optional) Host security
+
 [Setup fail2ban](https://github.com/dannybouwers/homecontroller/wiki/Setup-fail2ban)
 
 [Setup firewall](https://github.com/dannybouwers/homecontroller/wiki/Setup-firewall)
 
-## Set environment
-The setup uses the following environment variables. These can be set using [docker-compose supported methods](https://docs.docker.com/compose/environment-variables/). I have configured them in my CI/CD pipeline.
+### Create a folder
 
-| variable | description | default |
-| -------- | ----------- | ------- |
-| PROXY_WEB_PORT | port for HTTP connections | 80 |
-| PROXY_WEBSECURE_PORT | port for HTTPS connections | 443 |
-| PROXY_DOMAIN | main domain to use for services | - |
-| PROXY_LOCAL_DISKSTATION | address to reach diskstation (used in file provider) | - |
-| PROXY_WEBSTATION_SUBDOMAIN | Subdomain to reach Synology Webstation, Photo Station and Mail station. | www |
-| PROXY_WHITELIST | Allowed IPs for Traefik dashboard and service admin panels | 127.0.0.1 |
-| DOCKER_USER_ID | ID of the user that should own files created by containers | - |
-| DOCKER_GROUP_ID | ID of the group that should own files created by containers | - |
-| LE_EMAIL | e-mail address for Let's Encrypt | - |
-| CLOUDFLARE_DNS_API_TOKEN | [Cloudflare API token](https://dash.cloudflare.com/profile/api-tokens) with DNS:Edit permission | - |
-| VAULTWARDEN_ADMIN_TOKEN | Token to authenticate Vautlwarden [admin page](https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page) | - |
-| GOOGLE_EMAIL | Gmail address used to configure mail functions in services | - |
-| GOOGLE_PASS | [App password](https://support.google.com/accounts/answer/185833?hl=en&ref_topic=7189145) for GOOGLE_EMAIL | - |
+Copy this repository, e.g. by downloading the zip-file and extract it.
 
-To specify a specific tag fo a service, the environment variable TAG_SERVICENAME can be used. They will default to latest.
+```bash
+# apk add zip
+wget https://github.com/dannybouwers/homecontroller/archive/refs/heads/master.zip
+unzip ./master.zip
+cd ./homecontroller-master
+```
 
-## Prepare for running
-Run the file [setup.sh](setup.sh) to create directories and files mounted by docker compose.
+This directory is further referred to as 'working directory'.
+
+### Set environment
+
+Rename [.env.example](.env.example) to ```.env``` (or create a new file) and replace the contents with your personal details.
+
+```bash
+mv ./.env.example .env
+```
+
+### Create secrets
+
+Create the following text files in your working directory an fill them with the corresponding secret values:
+
+```bash
+echo "your-cloudflare-api-token" > ./secrets/cloudflare_api_token
+echo "your-google-smpt-password" > ./secrets/google_smtp_pass
+echo "a-password-for-the-vaultwarden-admin-page" > ./secrets/vaultwarden_admin_token
+```
+
+### Prepare for running
+
+Run the file [setup.sh](setup.sh) to create directories and files mounted by docker compose:
+
+```bash
+. ./setup.sh
+```
+
+### Run
+
+Start the containers using docker compose:
+
+```bash
+docker compose up -d --remove-orphans
+```
+
+### Access services
+
+If DNS is set up correctly, the services can be reached (and configured) using these urls:
+
+- Traefik: https://traefik.example.com
+- Unifi Controller: https://unifi.example.com
+- AdGuard Home: https://adguard.example.com
+- Vaultwarden: https://vaultwarden.example.com
+- Vaultwarden admin: https://vaultwarden.example.com/admin
+- Synology DSM: https://nas.example.com
+- Synology webstation: https://PROXY_WEBSTATION_SUBDOMAIN.example.com
 
 ## todo
+
 - [X] [Traefik](https://hub.docker.com/_/traefik/)
 - [X] [Unifi Controller](https://github.com/linuxserver/docker-unifi-controller)
-- [ ] [Plex](https://github.com/linuxserver/docker-plex)
 - [X] [AdGuard Home](https://github.com/AdguardTeam/AdGuardHome/wiki/Docker)
 - [X] Synology Disk Station
 - [X] Synology Photo Station
 - [X] fail2ban
 - [X] [vaultwarden](https://github.com/dani-garcia/vaultwarden)
+- [ ] [Plex](https://github.com/linuxserver/docker-plex)
+- [ ] [wg-easy](https://github.com/wg-easy/wg-easy)
+- [ ] [Firefly III](https://docs.firefly-iii.org/firefly-iii/installation/docker/)
+- [ ] semi-automated updates
 - [ ] automated test
+- [ ] use docker volumes
 - [ ] [Uptime Kuma](https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install)

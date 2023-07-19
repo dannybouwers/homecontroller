@@ -8,6 +8,8 @@ http:
       rule: Host(`nas.{{env "PROXY_DOMAIN"}}`)
       tls:
         certresolver: cloudflare
+        domains:
+          - main: '*.{{env "PROXY_DOMAIN"}}'
       middlewares: "redirect-mail-photostation"
 
   # rewrite for photo&mail station
