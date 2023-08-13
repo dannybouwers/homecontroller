@@ -14,7 +14,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:v2.10.3
+        image: traefik:v2.10.4
         restart: unless-stopped
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
@@ -108,7 +108,7 @@ services:
     adguard:
         hostname: adguard
         container_name: adguard
-        image: adguard/adguardhome:v0.107.34
+        image: adguard/adguardhome:v0.107.36
         restart: unless-stopped
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
@@ -132,7 +132,7 @@ services:
     vaultwarden:
         hostname: vaultwarden
         container_name: vaultwarden
-        image: vaultwarden/server:1.28.1
+        image: vaultwarden/server:1.29.1
         restart: unless-stopped
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
