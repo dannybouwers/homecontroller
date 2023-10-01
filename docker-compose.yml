@@ -82,7 +82,7 @@ services:
     unifi:
         hostname: unifi
         container_name: unifi
-        image: linuxserver/unifi-controller:7.5.174
+        image: linuxserver/unifi-controller:7.5.176
         restart: unless-stopped
         depends_on:
             - traefik
