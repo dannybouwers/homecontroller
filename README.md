@@ -79,6 +79,8 @@ If DNS is set up correctly, the services can be reached (and configured) using t
 - AdGuard Home: https://adguard.example.com
 - Vaultwarden: https://vaultwarden.example.com
 - Vaultwarden admin: https://vaultwarden.example.com/admin
+- Firefly III: https://firefly.example.com
+- Firefly III Data Importer: https://firefly-importer.example.com
 - Synology DSM: https://nas.example.com
 - Synology webstation: https://PROXY_WEBSTATION_SUBDOMAIN.example.com
 
@@ -93,7 +95,7 @@ If DNS is set up correctly, the services can be reached (and configured) using t
 - [X] [vaultwarden](https://github.com/dani-garcia/vaultwarden)
 - [ ] [Plex](https://github.com/linuxserver/docker-plex)
 - [ ] [wg-easy](https://github.com/wg-easy/wg-easy)
-- [ ] [Firefly III](https://docs.firefly-iii.org/firefly-iii/installation/docker/)
+- [x] [Firefly III](https://docs.firefly-iii.org/firefly-iii/installation/docker/)
 - [ ] semi-automated updates
 - [ ] automated test
 - [ ] use docker volumes
