@@ -9,7 +9,9 @@ Personal project to move all tools on my home server to Docker. [Alpine Linux](h
 - Redirect HTTP to HTTPS for all services
 - IP whitelist protection for admin pages
 - Automated redirect of Synology mailstation and webstation
+- Bind mounts for persistent data (easy backups)
 - Sensitive Vaultwarden configuration in docker secrets
+- Firefly III with PostgreSQL database and data importer
 
 ## Usage
 
@@ -98,5 +100,4 @@ If DNS is set up correctly, the services can be reached (and configured) using t
 - [x] [Firefly III](https://docs.firefly-iii.org/firefly-iii/installation/docker/)
 - [ ] semi-automated updates
 - [ ] automated test
-- [ ] use docker volumes
 - [ ] [Uptime Kuma](https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install)
