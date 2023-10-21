@@ -255,6 +255,8 @@ services:
             - fireflyiii-core
         secrets:
             - google_smtp_pass
+        volumes:
+            - ${PWD}/data/fireflyiii/importer:/var/www/html/storage/upload
         environment:
             - FIREFLY_III_URL=http://fireflyiii-core:8080
             - VANITY_URL=https://firefly.${PROXY_DOMAIN}
