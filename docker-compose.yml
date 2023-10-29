@@ -23,7 +23,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:v2.10.4
+        image: traefik:v2.10.5
         restart: unless-stopped
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
@@ -92,7 +92,7 @@ services:
     unifi:
         hostname: unifi
         container_name: unifi
-        image: linuxserver/unifi-controller:7.5.176
+        image: linuxserver/unifi-controller:7.5.187
         restart: unless-stopped
         depends_on:
             - traefik
@@ -118,7 +118,7 @@ services:
     adguard:
         hostname: adguard
         container_name: adguard
-        image: adguard/adguardhome:v0.107.38
+        image: adguard/adguardhome:v0.107.40
         restart: unless-stopped
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
