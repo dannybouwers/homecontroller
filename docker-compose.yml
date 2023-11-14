@@ -13,12 +13,16 @@ secrets:
         file: ${PWD}/secrets/fireflyiii_app_key
     fireflyiii_static_cron_token:
         file: ${PWD}/secrets/fireflyiii_static_cron_token
+    unifi_db_pass:
+        file: ${PWD}/secrets/unifi_db_pass
     
 networks: 
     frontend_traefik:
         name: frontend_traefik
     backend_fireflyiii:
         name: backend_fireflyiii
+    backend_unifi:
+        name: backend_unifi
 
 services:
     traefik:
@@ -89,19 +93,19 @@ services:
             - traefik.tls.stores.default.defaultgeneratedcert.domain.sans=*.${PROXY_DOMAIN}
 
 
-    unifi:
-        hostname: unifi
-        container_name: unifi
+    unifi-old:
+        hostname: unifi-old
+        container_name: unifi-old
         image: linuxserver/unifi-controller:7.5.187
         restart: unless-stopped
         depends_on:
             - traefik
         networks: 
             - frontend_traefik
-        ports:
-            - 3478:3478/udp # Unifi STUN port
-            - 10001:10001/udp # Required for AP discovery
-            - 8080:8080 # Required for device communication
+        # ports:
+            # - 3478:3478/udp # Unifi STUN port
+            # - 10001:10001/udp # Required for AP discovery
+            # - 8080:8080 # Required for device communication
         volumes:
             - ${PWD}/data/unifi/config:/config
         environment:
@@ -109,11 +113,66 @@ services:
             - PGID=${DOCKER_GROUP_ID:-1000}
         labels:
             - traefik.enable=true
+            - traefik.http.routers.unifi-old.rule=Host(`unifi-old.${PROXY_DOMAIN}`)
+            - traefik.http.routers.unifi-old.entrypoints=websecure
+            - traefik.http.routers.unifi-old.middlewares=traefik-ipwhitelist
+            - traefik.http.services.unifi-old.loadbalancer.server.port=8443
+            - traefik.http.services.unifi-old.loadbalancer.server.scheme=https
+
+    unifi:
+        image: linuxserver/unifi-network-application:7.5.187
+        hostname: unifi
+        container_name: unifi
+        secrets:
+            - unifi_db_pass
+        environment:
+            - PUID=${DOCKER_USER_ID:-1000}
+            - PGID=${DOCKER_GROUP_ID:-1000}
+            - TZ
+            - MONGO_USER=unifi
+            - FILE__MONGO_PASS=/run/secrets/unifi_db_pass
+            - MONGO_HOST=unifi-db
+            - MONGO_PORT=27017
+            - MONGO_DBNAME=unifi
+        volumes:
+            - ${PWD}/data/unifi/app:/config
+        ports:
+            - 3478:3478/udp # Unifi STUN port
+            - 10001:10001/udp # Required for AP discovery
+            - 8080:8080 # Required for device communication
+        restart: unless-stopped
+        depends_on:
+            - traefik
+            - unifi-db
+        networks: 
+            - frontend_traefik
+            - backend_unifi
+        labels:
+            - traefik.enable=true
             - traefik.http.routers.unifi.rule=Host(`unifi.${PROXY_DOMAIN}`)
             - traefik.http.routers.unifi.entrypoints=websecure
             - traefik.http.routers.unifi.middlewares=traefik-ipwhitelist
             - traefik.http.services.unifi.loadbalancer.server.port=8443
             - traefik.http.services.unifi.loadbalancer.server.scheme=https
+
+    unifi-db:
+        image: mongo:4.4
+        hostname: unifi-db
+        container_name: unifi-db
+        restart: unless-stopped
+        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        networks: 
+            - backend_unifi
+        volumes:
+            - ${PWD}/data/unifi/db:/data/db  
+            - ${PWD}/unifi/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+        secrets:
+            - unifi_db_pass
+        environment:
+            - PUID=${DOCKER_USER_ID:-1000}
+            - PGID=${DOCKER_GROUP_ID:-1000}
+            # - MONGO_INITDB_ROOT_USERNAME=unifi
+            # - MONGO_INITDB_ROOT_PASSWORD_FILE=/run/secrets/unifi_db_pass
 
     adguard:
         hostname: adguard
