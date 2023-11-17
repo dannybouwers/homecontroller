@@ -6,6 +6,7 @@ mkdir -p ${PWD}/data/traefik
 # mkdir -p ${PWD}/data/unifi/config
 mkdir -p ${PWD}/data/unifi/app
 mkdir -p ${PWD}/data/unifi/db
+mkdir -p ${PWD}/data/unifi/configdb
 
 test -f ${PWD}/secrets/unifi_db_pass && echo 'Secret unifi_db_pass already exists' || echo -n $(head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 32) > ${PWD}/secrets/unifi_db_pass
 sed -i "s/UNIFI_PASS/$(sed 's:/:\\/:g' ${PWD}/secrets/unifi_db_pass)/g" ${PWD}/unifi/init-mongo.js
