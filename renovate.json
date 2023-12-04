@@ -3,17 +3,31 @@
   "extends": [
     "config:base"
   ],
+  "baseBranches": [
+    "main",
+    "test"
+  ],
   "packageRules": [
     {
-      "groupName": "all non-major dependencies",
-      "groupSlug": "all-minor-patch",
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchBaseBranches": ["test"]
+    },
+    {
+      "groupName": "all non-major updates",
+      "groupSlug": "patch",
       "matchPackagePatterns": [
         "*"
       ],
       "matchUpdateTypes": [
         "minor",
         "patch"
-      ]
+      ],
+      "matchBaseBranches": ["main"]
     },
     {
       "matchPackageNames": ["mongo"],
