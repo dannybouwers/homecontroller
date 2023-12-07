@@ -27,7 +27,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:2.10.6
+        image: traefik:v2.10.7
         restart: unless-stopped
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
@@ -175,7 +175,7 @@ services:
     adguard:
         hostname: adguard
         container_name: adguard
-        image: adguard/adguardhome:v0.107.41
+        image: adguard/adguardhome:v0.107.42
         restart: unless-stopped
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
