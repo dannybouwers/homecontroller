@@ -34,7 +34,8 @@ steps:
         --endpoint=https://dev.azure.com/dannybouwers \
         --token=$(System.AccessToken) \
         --detect-host-rules-from-env=true \
-        --git-author="Renovate Bot <bot@renovateapp.com>" 
+        --git-author="Renovate Bot <bot@renovateapp.com>" \
+        homecontroller/homecontroller
     failOnStderr: true
   env:
     GITHUB_COM_TOKEN: $(githubtoken)
