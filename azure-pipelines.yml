@@ -16,11 +16,11 @@ variables:
 
 steps:
 # Base required for Renovate to run
-- task: NodeTool@0
-  displayName: Enable Node.js 16
-  name: nodejs16
+- task: UseNode@1
+  displayName: Enable Node.js
+  name: nodejs
   inputs:
-    versionSpec: '16.x'
+    version: '20.x'
 
 - task: Bash@3
   displayName: Renovate Scan
