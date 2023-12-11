@@ -9,7 +9,7 @@ schedules:
     always: true
 
 pool:
-  vmImage: ubuntu-latest
+  name: Default
 
 variables:
   - group: "renovate"
