@@ -1,0 +1,40 @@
+trigger: none
+
+schedules:
+  - cron: "0 3 * * *"
+    displayName: "Every day at 03:00"
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: "renovate"
+
+steps:
+# Base required for Renovate to run
+- task: NodeTool@0
+  displayName: Enable Node.js 16
+  name: nodejs16
+  inputs:
+    versionSpec: '16.x'
+
+- task: Bash@3
+  displayName: Renovate Scan
+  name: renovate
+  inputs:
+    targetType: 'inline'
+    script: |
+      npm install -g renovate
+      renovate \
+        --platform=azure \
+        --endpoint=https://dev.azure.com/dannybouwers \
+        --token=$(System.AccessToken) \
+        --detect-host-rules-from-env=true \
+        --git-author="Renovate Bot <bot@renovateapp.com>" 
+    failOnStderr: true
+  env:
+    GITHUB_COM_TOKEN: $(githubtoken)
