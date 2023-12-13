@@ -25,6 +25,7 @@ jobs:
       inline: |
         cd ./homecontroller
         . ./setup.sh
+      interpreterCommand: '/usr/bin/sh'
       readyTimeout: '20000'
   
   - task: SSH@0
@@ -34,6 +35,7 @@ jobs:
       runOptions: 'inline'
       inline: |
         cd ./homecontroller
-        docker compose build
+        docker compose pull
         docker compose up -d
+      interpreterCommand: '/usr/bin/sh'
       readyTimeout: '20000'
