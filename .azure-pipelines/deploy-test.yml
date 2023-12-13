@@ -30,6 +30,6 @@ jobs:
     inputs:
       sshEndpoint: 'Homecontroller TEST'
       runOptions: 'commands'
-      commands: cd ./homecontroller && docker compose up -d --quiet-pull --no-color
-      interpreterCommand: '/usr/bin/sh'
+      commands: 'cd ./homecontroller && docker compose up -d --quiet-pull --no-color'
+      failOnStdErr: false
       readyTimeout: '20000'
