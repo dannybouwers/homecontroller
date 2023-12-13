@@ -26,10 +26,10 @@ jobs:
       readyTimeout: '20000'
   
   - task: SSH@0
-    displayName: 'Pull and start'
+    displayName: '(Re)start compose stack'
     inputs:
       sshEndpoint: 'Homecontroller TEST'
       runOptions: 'commands'
-      commands: cd ./homecontroller && docker compose pull && docker compose up -d
+      commands: cd ./homecontroller && docker compose up -d
       interpreterCommand: '/usr/bin/sh'
       readyTimeout: '20000'
