@@ -1,7 +1,8 @@
 trigger: none
 
 jobs:
-- job: 'Deploy to TEST'
+- job: 'deploy_to_test'
+  displayName: 'Deploy to TEST'
   pool: Default
   steps:
   - task: CopyFilesOverSSH@0
