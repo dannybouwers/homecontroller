@@ -29,7 +29,7 @@ jobs:
       readyTimeout: '20000'
   
   - task: SSH@0
-    displayName: 'Build and start stack'
+    displayName: 'Pull and start'
     inputs:
       sshEndpoint: 'Homecontroller TEST'
       runOptions: 'inline'
