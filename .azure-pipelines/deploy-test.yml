@@ -1,0 +1,38 @@
+trigger: none
+
+jobs:
+- job: 'Deploy to TEST'
+  pool: Default
+  steps:
+  - task: CopyFilesOverSSH@0
+    displayName: 'Copy files'
+    inputs:
+      sshEndpoint: 'Homecontroller TEST'
+      contents: |
+        **
+        !README*
+        !LICENSE
+        !.*
+      targetFolder: 'homecontroller'
+      readyTimeout: '20000'
+  
+  - task: SSH@0
+    displayName: 'Run setup'
+    inputs:
+      sshEndpoint: 'Homecontroller TEST'
+      runOptions: 'inline'
+      inline: |
+        cd ./homecontroller
+        . ./setup.sh
+      readyTimeout: '20000'
+  
+  - task: SSH@0
+    displayName: 'Build and start stack'
+    inputs:
+      sshEndpoint: 'Homecontroller TEST'
+      runOptions: 'inline'
+      inline: |
+        cd ./homecontroller
+        docker compose build
+        docker compose up -d
+      readyTimeout: '20000'
