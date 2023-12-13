@@ -22,7 +22,7 @@ jobs:
     inputs:
       sshEndpoint: 'Homecontroller TEST'
       runOptions: 'commands'
-      commands: . ./homecontroller/setup.sh
+      commands: cd ./homecontroller && . ./setup.sh
       readyTimeout: '20000'
   
   - task: SSH@0
