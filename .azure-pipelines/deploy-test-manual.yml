@@ -1,0 +1,13 @@
+trigger: none
+
+pool:
+  name: Default
+
+stages:
+- stage: deploy
+  displayName: 'Deploy to TEST'
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      environment: 'TEST'
+      stack: 'homecontroller'
