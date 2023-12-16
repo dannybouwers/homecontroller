@@ -1,0 +1,22 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - README*
+    - LICENSE
+    - .*
+
+pool:
+  name: Default
+
+stages:
+- stage: deploy
+  displayName: 'Deploy to PROD'
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      environment: 'PROD'
+      stack: 'homecontroller'
