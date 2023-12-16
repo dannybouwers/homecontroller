@@ -1,0 +1,17 @@
+trigger: none
+
+variables:
+  isPatch: $[eq(variables['System.PullRequest.SourceBranch'], 'refs/heads/renovate/patch')]
+
+pool:
+  name: Default
+
+stages:
+- stage: deploy
+  displayName: 'Deploy Patch to TEST'
+  condition: eq(variables.isPatch, true)
+  jobs:
+  - template: templates/deploy.yml
+    parameters:
+      environment: 'TEST'
+      stack: 'homecontroller'
