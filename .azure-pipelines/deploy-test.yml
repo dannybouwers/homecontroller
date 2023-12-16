@@ -1,0 +1,48 @@
+trigger: none
+
+variables:
+  isPatch: $[eq(variables['System.PullRequest.SourceBranch'], 'refs/heads/renovate/patch')]
+
+jobs:
+- job: 'deploy_to_test'
+  displayName: 'Deploy to TEST'
+  pool: Default
+  condition: eq(variables.isPatch, true)
+  steps:
+  - task: CopyFilesOverSSH@0
+    displayName: 'Copy files'
+    inputs:
+      sshEndpoint: 'Homecontroller TEST'
+      contents: |
+        **
+        !README*
+        !LICENSE
+        !.*
+      targetFolder: 'homecontroller'
+      readyTimeout: '20000'
+  
+  - task: SSH@0
+    displayName: 'Run setup'
+    inputs:
+      sshEndpoint: 'Homecontroller TEST'
+      runOptions: 'commands'
+      commands: cd ./homecontroller && . ./setup.sh
+      readyTimeout: '20000'
+  
+  - task: SSH@0
+    displayName: 'Pull compose stack'
+    inputs:
+      sshEndpoint: 'Homecontroller TEST'
+      runOptions: 'commands'
+      commands: 'cd ./homecontroller && docker compose pull -q 2>&1'
+      failOnStdErr: false
+      readyTimeout: '20000'
+
+  - task: SSH@0
+    displayName: '(Re)start compose stack'
+    inputs:
+      sshEndpoint: 'Homecontroller TEST'
+      runOptions: 'commands'
+      commands: 'cd ./homecontroller && docker compose up -d 2>&1'
+      failOnStdErr: false
+      readyTimeout: '20000'
