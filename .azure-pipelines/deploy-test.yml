@@ -4,6 +4,7 @@ jobs:
 - job: 'deploy_to_test'
   displayName: 'Deploy to TEST'
   pool: Default
+  condition: eq(System.PullRequest.SourceBranch, 'refs/heads/renovate/patch')
   steps:
   - task: CopyFilesOverSSH@0
     displayName: 'Copy files'
