@@ -1,0 +1,49 @@
+parameters:
+- name: environment
+  type: string
+  default: 'TEST'
+- name: stack
+  type: string
+  default: 'homecontroller'
+
+jobs:
+- job: 'Deploy'
+  displayName: 'Deploy to ${{ parameters.environment }}'
+  steps:
+  - task: CopyFilesOverSSH@0
+    displayName: 'Copy files'
+    inputs:
+      sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
+      contents: |
+        **
+        !README*
+        !LICENSE
+        !.*
+      targetFolder: ${{ parameters.stack }}
+      readyTimeout: '20000'
+  
+  - task: SSH@0
+    displayName: 'Run setup'
+    inputs:
+      sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
+      runOptions: 'commands'
+      commands: cd ./${{ parameters.stack }} && . ./setup.sh
+      readyTimeout: '20000'
+  
+  - task: SSH@0
+    displayName: 'Pull compose stack'
+    inputs:
+      sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
+      runOptions: 'commands'
+      commands: 'cd ./${{ parameters.stack }} && docker compose pull -q 2>&1'
+      failOnStdErr: false
+      readyTimeout: '20000'
+
+  - task: SSH@0
+    displayName: '(Re)start compose stack'
+    inputs:
+      sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
+      runOptions: 'commands'
+      commands: 'cd ./${{ parameters.stack }} && docker compose up -d 2>&1'
+      failOnStdErr: false
+      readyTimeout: '20000'
