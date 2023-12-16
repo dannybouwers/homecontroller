@@ -1,10 +1,13 @@
 trigger: none
 
+variables:
+  isPatch: $[eq(variables['System.PullRequest.SourceBranch'], 'refs/heads/renovate/patch')]
+
 jobs:
 - job: 'deploy_to_test'
   displayName: 'Deploy to TEST'
   pool: Default
-  condition: eq(System.PullRequest.SourceBranch, 'refs/heads/renovate/patch')
+  condition: eq(variables.isPatch, true)
   steps:
   - task: CopyFilesOverSSH@0
     displayName: 'Copy files'
