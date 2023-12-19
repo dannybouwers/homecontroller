@@ -5,6 +5,10 @@
   ],
   "packageRules": [
     {
+      "matchPackagePatterns": ["fireflyiii"],
+      "extractVersion": "^version-(?<version>.*)$"
+    },
+    {
       "matchPackagePatterns": [
         "*"
       ],

@@ -8,6 +8,7 @@ trigger:
     - README*
     - LICENSE
     - .*
+    - renovate.json
 
 pool:
   name: Default
