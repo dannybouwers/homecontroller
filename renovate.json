@@ -5,7 +5,6 @@
   ],
   "packageRules": [
     {
-      "matchDatasources": ["docker"],
       "matchPackagePatterns": ["fireflyiii"],
       "extractVersion": "^version-(?<version>.*)$"
     },
