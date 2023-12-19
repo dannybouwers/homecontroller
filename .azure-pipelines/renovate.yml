@@ -40,4 +40,3 @@ steps:
   env:
     GITHUB_COM_TOKEN: $(githubtoken)
     LOG_LEVEL: debug
-    LOG_FORMAT: json
