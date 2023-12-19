@@ -7,7 +7,7 @@
     {
       "matchDatasources": ["docker"],
       "matchPackagePatterns": ["fireflyiii"],
-      "extractVersion": "^release-(?<version>.*)$"
+      "extractVersion": "^version-(?<version>.*)$"
     },
     {
       "matchPackagePatterns": [
