@@ -35,7 +35,7 @@ jobs:
     inputs:
       sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
       runOptions: 'commands'
-      commands: cd ./${{ parameters.stack }} && docker system prune -a -f --volumes
+      commands: cd ./${{ parameters.stack }} && docker system prune -a -f
       failOnStdErr: false
       readyTimeout: '20000'
   
