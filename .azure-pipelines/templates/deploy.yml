@@ -29,6 +29,15 @@ jobs:
       runOptions: 'commands'
       commands: cd ./${{ parameters.stack }} && . ./setup.sh
       readyTimeout: '20000'
+
+  - task: SSH@0
+    displayName: 'Remove unused Docker data'
+    inputs:
+      sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
+      runOptions: 'commands'
+      commands: cd ./${{ parameters.stack }} && docker system prune -a -f --volumes
+      failOnStdErr: false
+      readyTimeout: '20000'
   
   - task: SSH@0
     displayName: 'Pull compose stack'
