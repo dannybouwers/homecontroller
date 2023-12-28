@@ -242,7 +242,7 @@ services:
             - traefik.http.services.vaultwarden-ws.loadbalancer.server.port=3012
 
     fireflyiii-core:
-        image: fireflyiii/core:version-6.1.0
+        image: fireflyiii/core:version-6.1.1
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:
