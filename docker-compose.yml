@@ -119,7 +119,7 @@ services:
     #         - traefik.http.services.unifi-old.loadbalancer.server.scheme=https
 
     unifi:
-        image: linuxserver/unifi-network-application:8.0.24
+        image: linuxserver/unifi-network-application:8.0.26
         hostname: unifi
         container_name: unifi
         secrets:
@@ -242,7 +242,7 @@ services:
             - traefik.http.services.vaultwarden-ws.loadbalancer.server.port=3012
 
     fireflyiii-core:
-        image: fireflyiii/core:version-6.1.1
+        image: fireflyiii/core:version-6.1.4
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:
