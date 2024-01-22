@@ -14,29 +14,43 @@ pool:
 variables:
   - group: "renovate"
 
-steps:
-# Base required for Renovate to run
-- task: UseNode@1
-  displayName: Enable Node.js
-  name: nodejs
-  inputs:
-    version: '20.x'
+container: swissgrc/azure-pipelines-renovate:latest
 
-- task: Bash@3
-  displayName: Renovate Scan
-  name: renovate
-  inputs:
-    targetType: 'inline'
-    script: |
-      npm install -g renovate
-      renovate \
-        --platform=azure \
-        --endpoint=https://dev.azure.com/dannybouwers \
-        --token=$(System.AccessToken) \
-        --detect-host-rules-from-env=true \
-        --git-author="Renovate Bot <bot@renovateapp.com>" \
-        homecontroller/homecontroller
-    failOnStderr: true
+steps:
+- bash: |
+    npx renovate 
   env:
     GITHUB_COM_TOKEN: $(githubtoken)
-    LOG_LEVEL: debug
+    RENOVATE_PLATFORM: azure
+    RENOVATE_ENDPOINT: $(System.CollectionUri)
+    RENOVATE_TOKEN: $(System.AccessToken)
+    RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
+    RENOVATE_GIT_AUTHOR: "Renovate Bot <bot@renovateapp.com>"
+    RENOVATE_REPOSITORIES: homecontroller/homecontroller
+
+# steps:
+# Base required for Renovate to run
+# - task: UseNode@1
+#   displayName: Enable Node.js
+#   name: nodejs
+#   inputs:
+#     version: '20.x'
+
+# - task: Bash@3
+#   displayName: Renovate Scan
+#   name: renovate
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       npm install -g renovate
+#       renovate \
+#         --platform=azure \
+#         --endpoint=https://dev.azure.com/dannybouwers \
+#         --token=$(System.AccessToken) \
+#         --detect-host-rules-from-env=true \
+#         --git-author="Renovate Bot <bot@renovateapp.com>" \
+#         homecontroller/homecontroller
+#     failOnStderr: true
+#   env:
+#     GITHUB_COM_TOKEN: $(githubtoken)
+#     LOG_LEVEL: debug
