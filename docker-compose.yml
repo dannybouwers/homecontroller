@@ -235,12 +235,7 @@ services:
             - traefik.http.routers.vaultwarden-admin.entrypoints=websecure
             - traefik.http.routers.vaultwarden-admin.middlewares=traefik-ipwhitelist
             - traefik.http.services.vaultwarden-admin.loadbalancer.server.port=80
-            # Entry Point for Websocket
-            - traefik.http.routers.vaultwarden-ws.service=vaultwarden-ws
-            - traefik.http.routers.vaultwarden-ws.rule=Host(`vaultwarden.${PROXY_DOMAIN}`) && Path(`/notifications/hub`)
-            - traefik.http.routers.vaultwarden-ws.entrypoints=websecure
-            - traefik.http.services.vaultwarden-ws.loadbalancer.server.port=3012
-
+            
     fireflyiii-core:
         image: fireflyiii/core:version-6.1.7
         hostname: fireflyiii-core
