@@ -35,13 +35,5 @@ stages:
 
     - script: |
         git remote add github https://$(GitHubAccessToken)@github.com/$(GitHubUserName)/$(GitHubRepository).git
-        
-        # Fetch the changes from the remote repository
-        git fetch github main
-
-        # Merge the changes into your local branch (main)
-        git merge github/main
-
-        # Push the merged changes to GitHub
         git push github HEAD:main --force
       displayName: 'Sync to GitHub'
