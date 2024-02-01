@@ -13,6 +13,9 @@ trigger:
 pool:
   name: Default
 
+variables:
+  - group: GitHub
+
 stages:
 - stage: deploy
   displayName: 'Deploy to PROD'
@@ -21,3 +24,16 @@ stages:
     parameters:
       environment: 'PROD'
       stack: 'homecontroller'
+
+- stage: sync
+  displayName: 'Sync to GitHub'
+  jobs:
+  - job: SyncToGitHub
+    displayName: 'Sync to GitHub'
+    steps:
+    - checkout: self
+
+    - script: |
+        git remote add github https://$(GitHubAccessToken)@github.com/$(GitHubUserName)/$(GitHubRepository).git
+        git push github HEAD:main
+      displayName: 'Sync to GitHub'
