@@ -43,5 +43,5 @@ stages:
         git merge github/main
 
         # Push the merged changes to GitHub
-        git push github HEAD:main
+        git push github HEAD:main --force
       displayName: 'Sync to GitHub'
