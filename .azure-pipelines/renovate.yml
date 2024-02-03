@@ -14,30 +14,35 @@ pool:
 variables:
   - group: "renovate"
 
-jobs:
-- job: RunRenovate
-  displayName: 'Run Renovate'
-  
-  container: swissgrc/azure-pipelines-renovate:latest
+stages:
+- stage: run
+  displayName: 'Run jobs'
+  jobs:
+  - job: RunRenovate
+    displayName: 'Run Renovate'
+    container: swissgrc/azure-pipelines-renovate:latest
 
-  steps:
-  - bash: |
-      npx renovate 
-    env:
-      GITHUB_COM_TOKEN: $(githubtoken)
-      RENOVATE_PLATFORM: azure
-      RENOVATE_ENDPOINT: $(System.CollectionUri)
-      RENOVATE_TOKEN: $(System.AccessToken)
-      RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
-      RENOVATE_GIT_AUTHOR: "Renovate Bot <bot@renovateapp.com>"
-      RENOVATE_REPOSITORIES: homecontroller/homecontroller
-    displayName: Renovate Scan
-    name: renovate
+    steps:
+    - bash: |
+        npx renovate 
+      env:
+        GITHUB_COM_TOKEN: $(githubtoken)
+        RENOVATE_PLATFORM: azure
+        RENOVATE_ENDPOINT: $(System.CollectionUri)
+        RENOVATE_TOKEN: $(System.AccessToken)
+        RENOVATE_DETECT_HOST_RULES_FROM_ENV: true
+        RENOVATE_GIT_AUTHOR: "Renovate Bot <bot@renovateapp.com>"
+        RENOVATE_REPOSITORIES: homecontroller/homecontroller
+      displayName: Renovate Scan
+      name: renovate
 
-- job: pruneDocker
-  displayName: 'Prune Docker system'
+- stage: clean
+  displayName: 'Clean agent'
+  jobs:
+  - job: pruneDocker
+    displayName: 'Prune Docker system'
 
-  steps:
-  - task: CmdLine@2
-    inputs:
-      script: 'docker system prune -a --force' 
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: 'docker system prune -a --force' 
