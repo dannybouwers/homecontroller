@@ -27,7 +27,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:v2.10.7
+        image: traefik:v2.11.0
         restart: unless-stopped
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
@@ -175,7 +175,7 @@ services:
     adguard:
         hostname: adguard
         container_name: adguard
-        image: adguard/adguardhome:v0.107.43
+        image: adguard/adguardhome:v0.107.44
         restart: unless-stopped
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
@@ -237,7 +237,7 @@ services:
             - traefik.http.services.vaultwarden-admin.loadbalancer.server.port=80
             
     fireflyiii-core:
-        image: fireflyiii/core:version-6.1.8
+        image: fireflyiii/core:version-6.1.9
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:
@@ -282,7 +282,7 @@ services:
             - traefik.docker.network=frontend_traefik
 
     fireflyiii-db:
-        image: postgres:16.1
+        image: postgres:16.2
         hostname: fireflyiii-db
         restart: unless-stopped
         container_name: fireflyiii-db
@@ -296,7 +296,7 @@ services:
             - ${PWD}/data/fireflyiii/db:/var/lib/postgresql/data
 
     fireflyiii-importer:
-        image: fireflyiii/data-importer:version-1.4.3
+        image: fireflyiii/data-importer:version-1.4.4
         hostname: fireflyiii-importer
         restart: unless-stopped
         container_name: fireflyiii-importer
