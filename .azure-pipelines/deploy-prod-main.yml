@@ -31,9 +31,15 @@ stages:
   - job: SyncToGitHub
     displayName: 'Sync to GitHub'
     steps:
-    - checkout: self
-
     - script: |
-        git remote add github https://$(GitHubAccessToken)@github.com/$(GitHubUserName)/$(GitHubRepository).git
-        git push github HEAD:main --force
-      displayName: 'Sync to GitHub'
+        git config --global user.email "pipeline@dev.azure.com" &&
+        git config --global user.name "Azure DevOps" &&
+        git clone https://$(GitHubAccessToken)@github.com/$(GitHubUserName)/$(GitHubRepository).git $(Agent.TempDirectory)/temp_repo &&
+        cd $(Agent.TempDirectory)/temp_repo &&
+        git checkout main &&
+        tar -cpP --exclude=.git -C "$(Build.SourcesDirectory)" . | tar -xpP -C "$(Agent.TempDirectory)/temp_repo" &&
+        cd $(Agent.TempDirectory)/temp_repo &&
+        git add . &&
+        git diff-index --quiet HEAD || git commit -m "Auto-commit from Azure DevOps" &&
+        git push origin main
+      displayName: 'Copy to GitHub'
