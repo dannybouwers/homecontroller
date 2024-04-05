@@ -19,6 +19,7 @@ jobs:
         !README*
         !LICENSE
         !.*
+        !.*/**
       targetFolder: ${{ parameters.stack }}
       readyTimeout: '20000'
   

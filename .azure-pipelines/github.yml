@@ -1,0 +1,41 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+
+pool:
+  name: Default
+
+variables:
+  - group: GitHub
+
+stages:
+- stage: sync
+  displayName: 'Sync to GitHub'
+  jobs:
+  - job: SyncToGitHub
+    displayName: 'Sync to GitHub'
+    steps:
+    - script: |
+        git config --global user.email "$(GitHubEmail)" &&
+        git config --global user.name "$(GitHubUserName)"
+      displayName: 'Configure GitHub user'
+
+    - script: |
+        git clone https://$(GitHubAccessToken)@github.com/$(GitHubUserName)/$(GitHubRepository).git $(Agent.TempDirectory)/temp_repo &&
+        cd $(Agent.TempDirectory)/temp_repo &&
+        git checkout main
+      displayName: 'Clone GitHub'
+
+    - script: |
+        cd $(Agent.TempDirectory)/temp_repo &&
+        tar -cpP --exclude=.git -C "$(Build.SourcesDirectory)" . | tar -xpP -C "$(Agent.TempDirectory)/temp_repo" &&
+        git add .
+      displayName: 'Copy DevOps to GitHub'
+
+    - script: |
+        cd $(Agent.TempDirectory)/temp_repo &&
+        git diff-index --quiet HEAD || git commit -m "Auto-commit from Azure DevOps" &&
+        git push origin main
+      displayName: 'Commit to GitHub'
