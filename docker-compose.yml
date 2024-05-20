@@ -177,7 +177,7 @@ services:
         container_name: adguard
         image: adguard/adguardhome:v0.107.48
         restart: unless-stopped
-        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        # user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
             - traefik
         networks: 
@@ -237,7 +237,7 @@ services:
             - traefik.http.services.vaultwarden-admin.loadbalancer.server.port=80
             
     fireflyiii-core:
-        image: fireflyiii/core:version-6.1.15
+        image: fireflyiii/core:version-6.1.16
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:

@@ -1,0 +1,22 @@
+parameters:
+- name: environment
+  type: string
+  default: 'TEST'
+- name: stack
+  type: string
+  default: 'homecontroller'
+
+jobs:
+- job: 'Test'
+  displayName: 'Test on ${{ parameters.environment }}'
+  steps:
+
+  - checkout: none
+  
+  - task: SSH@0
+    displayName: 'Run test'
+    inputs:
+      sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
+      runOptions: 'commands'
+      commands: cd ./${{ parameters.stack }} && . ./test.sh
+      readyTimeout: '20000'

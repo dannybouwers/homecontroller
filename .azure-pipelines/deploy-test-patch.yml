@@ -15,3 +15,12 @@ stages:
     parameters:
       environment: 'TEST'
       stack: 'homecontroller'
+
+- stage: test
+  displayName: 'Test patch on TEST'
+  condition: eq(variables.isPatch, true)
+  jobs:
+  - template: templates/test.yml
+    parameters:
+      environment: 'TEST'
+      stack: 'homecontroller'

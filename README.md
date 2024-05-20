@@ -72,6 +72,14 @@ Start the containers using docker compose:
 docker compose up -d --remove-orphans
 ```
 
+### Test
+
+Test if everything is running using:
+
+```bash
+. ./test.sh
+```
+
 ### Access services
 
 If DNS is set up correctly, the services can be reached (and configured) using these urls:
@@ -96,8 +104,7 @@ If DNS is set up correctly, the services can be reached (and configured) using t
 - [X] fail2ban
 - [X] [vaultwarden](https://github.com/dani-garcia/vaultwarden)
 - [ ] [Plex](https://github.com/linuxserver/docker-plex)
-- [ ] [wg-easy](https://github.com/wg-easy/wg-easy)
+- [ ] [SnappyMail](https://github.com/the-djmaze/snappymail/tree/master/examples/docker)
 - [x] [Firefly III](https://docs.firefly-iii.org/firefly-iii/installation/docker/)
-- [ ] semi-automated updates
-- [ ] automated test
-- [ ] [Uptime Kuma](https://github.com/louislam/uptime-kuma/wiki/%F0%9F%94%A7-How-to-Install)
+- [x] semi-automated updates
+- [x] automated test

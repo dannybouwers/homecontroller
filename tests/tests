@@ -1,0 +1,37 @@
+#!/bin/bash
+error () {
+    echo -e "\e[1;31mError:\e[0m $1"
+    exit 1
+}
+
+success () {
+    echo -e "\e[1;32mSuccess:\e[0m $1"
+}
+
+# Check if Docker container is running
+check_docker_container() {
+    container=$1
+    if docker ps | grep "$container" | grep -q "Up"; then
+        success "Docker container $container is running."
+    else
+        error "Docker container $container is not running."
+    fi
+}
+
+
+# Check if the URL returns status 200
+check_url_status() {
+    testurl=$1
+    baseUrl=$(echo "$testurl" | cut -d/ -f3)
+    ip=$(ip route get 1 | head -1 | cut -d' ' -f8)
+    
+    response_code=$(curl -k -s -L -o /dev/null -w "%{http_code}" "$testurl" --resolve "$baseUrl:443:$ip")
+
+    obfuscated_url=$(echo "$testurl" | sed "s|$baseUrl|***|g")
+
+    if [ "$response_code" -eq 200 ]; then
+        success "URL $obfuscated_url returned status 200."
+    else
+        error "URL $obfuscated_url returned status $response_code."
+    fi
+}

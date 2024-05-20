@@ -25,7 +25,8 @@
       "matchUpdateTypes": [
         "minor",
         "patch"
-      ]
+      ],
+      "automerge": true
     },
     {
       "matchPackageNames": ["mongo"],
