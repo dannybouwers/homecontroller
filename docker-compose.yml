@@ -27,7 +27,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:v3.0.0
+        image: traefik:v3.0.1
         restart: unless-stopped
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
@@ -175,7 +175,7 @@ services:
     adguard:
         hostname: adguard
         container_name: adguard
-        image: adguard/adguardhome:v0.107.48
+        image: adguard/adguardhome:v0.107.50
         restart: unless-stopped
         # user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
@@ -330,7 +330,7 @@ services:
             - traefik.docker.network=frontend_traefik
 
     fireflyiii-cron:
-        image: alpine:3.19.1
+        image: alpine:3.20.0
         container_name: fireflyiii-cron
         restart: unless-stopped
         command: sh -c "echo \"0 3 * * * wget -qO- http://fireflyiii-core:8080/api/v1/cron/$(cat /run/secrets/fireflyiii_static_cron_token)\" | crontab - && crond -f -L /dev/stdout"
