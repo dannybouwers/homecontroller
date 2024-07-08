@@ -36,6 +36,6 @@ stages:
 
     - script: |
         cd $(Agent.TempDirectory)/temp_repo &&
-        git diff-index --quiet HEAD || git commit -m "Auto-commit from Azure DevOps" &&
+        git diff-index --quiet HEAD || git commit -m "$(Build.SourceVersionMessage)" &&
         git push origin main
       displayName: 'Commit to GitHub'
