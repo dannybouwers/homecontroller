@@ -117,7 +117,7 @@ services:
     #         - traefik.http.services.unifi-old.loadbalancer.server.scheme=https
 
     unifi:
-        image: linuxserver/unifi-network-application:8.2.93
+        image: linuxserver/unifi-network-application:8.3.32
         hostname: unifi
         container_name: unifi
         secrets:
