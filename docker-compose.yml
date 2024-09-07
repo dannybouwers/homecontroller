@@ -328,7 +328,7 @@ services:
             - traefik.docker.network=frontend_traefik
 
     fireflyiii-cron:
-        image: alpine:3.20.2
+        image: alpine:3.20.3
         container_name: fireflyiii-cron
         restart: unless-stopped
         command: sh -c "echo \"0 3 * * * wget -qO- http://fireflyiii-core:8080/api/v1/cron/$(cat /run/secrets/fireflyiii_static_cron_token)\" | crontab - && crond -f -L /dev/stdout"
