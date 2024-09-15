@@ -294,7 +294,7 @@ services:
             - ${PWD}/data/fireflyiii/db:/var/lib/postgresql/data
 
     fireflyiii-importer:
-        image: fireflyiii/data-importer:version-1.5.5
+        image: fireflyiii/data-importer:version-1.5.6
         hostname: fireflyiii-importer
         restart: unless-stopped
         container_name: fireflyiii-importer
