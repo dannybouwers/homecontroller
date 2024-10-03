@@ -18,7 +18,7 @@ stages:
 
 - stage: test
   displayName: 'Test patch on TEST'
-  condition: eq(variables.isPatch, true)
+  condition: and(succeeded(), eq(variables.isPatch, true))
   jobs:
   - template: templates/test.yml
     parameters:
