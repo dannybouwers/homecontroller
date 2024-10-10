@@ -25,7 +25,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:v3.1.5
+        image: traefik:v3.1.6
         restart: unless-stopped
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
@@ -117,7 +117,7 @@ services:
     #         - traefik.http.services.unifi-old.loadbalancer.server.scheme=https
 
     unifi:
-        image: linuxserver/unifi-network-application:8.4.62
+        image: linuxserver/unifi-network-application:8.5.6
         hostname: unifi
         container_name: unifi
         secrets:
