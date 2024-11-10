@@ -235,7 +235,7 @@ services:
             - traefik.http.services.vaultwarden-admin.loadbalancer.server.port=80
             
     fireflyiii-core:
-        image: fireflyiii/core:version-6.1.21
+        image: fireflyiii/core:version-6.1.22
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:
@@ -294,7 +294,7 @@ services:
             - ${PWD}/data/fireflyiii/db:/var/lib/postgresql/data
 
     fireflyiii-importer:
-        image: fireflyiii/data-importer:version-1.5.6
+        image: fireflyiii/data-importer:version-1.5.7
         hostname: fireflyiii-importer
         restart: unless-stopped
         container_name: fireflyiii-importer
