@@ -280,7 +280,7 @@ services:
             - traefik.docker.network=frontend_traefik
 
     fireflyiii-db:
-        image: postgres:16.4
+        image: postgres:16.5
         hostname: fireflyiii-db
         restart: unless-stopped
         container_name: fireflyiii-db
