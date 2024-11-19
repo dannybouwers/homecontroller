@@ -197,7 +197,7 @@ services:
     vaultwarden:
         hostname: vaultwarden
         container_name: vaultwarden
-        image: vaultwarden/server:1.32.4
+        image: vaultwarden/server:1.32.5
         restart: unless-stopped
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         depends_on:
