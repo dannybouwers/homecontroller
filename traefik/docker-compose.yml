@@ -1,0 +1,75 @@
+secrets:
+    cloudflare_api_token:
+        file: ${PWD}/secrets/cloudflare_api_token
+    
+networks: 
+    frontend_traefik:
+        name: frontend_traefik
+
+services:
+    traefik:
+        hostname: traefik
+        image: traefik:v3.2.3
+        restart: unless-stopped
+        container_name: traefik
+        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        command:
+            - --api # Secure API
+            - --providers.docker # Tells Traefik to listen to docker
+            - --providers.docker.network=frontend_traefik # Tells Traefik to use the docker network called traefik
+            - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
+            - --providers.file.directory=/homecontroller/dynamic_conf # File provider
+            # HHTP entry with redirect to HTTPS
+            - --entrypoints.web.address=:80
+            - --entrypoints.web.http.redirections.entrypoint.to=websecure
+            - --entrypoints.web.http.redirections.entrypoint.scheme=https
+            # HTTPS entry
+            - --entrypoints.websecure.address=:443
+            - --entrypoints.websecure.http.tls=true
+            - --entrypoints.websecure.http.tls.certresolver=cloudflare
+             # Allow these IPs to set the X-Forwarded-* headers and proxyProtocol
+            - --entrypoints.websecure.forwardedHeaders.trustedIPs=${PROXY_TRUSTEDIPS}
+            - --entryPoints.websecure.proxyProtocol.trustedIPs=${PROXY_TRUSTEDIPS}
+            # Let's encrypt with Cloudflare
+            - --certificatesresolvers.cloudflare.acme.email=${LE_EMAIL}
+            - --certificatesresolvers.cloudflare.acme.storage=/data/acme.json
+            - --certificatesresolvers.cloudflare.acme.caserver=${LE_CASERVER:-https://acme-v02.api.letsencrypt.org/directory}
+            - --certificatesResolvers.cloudflare.acme.dnsChallenge.provider=cloudflare
+            - --certificatesResolvers.cloudflare.acme.dnsChallenge.resolvers=1.1.1.1:53,1.0.0.1:53
+            - --certificatesResolvers.cloudflare.acme.dnsChallenge.delayBeforeCheck=90
+            # Disable check for valid HTTPS certificates of backend services
+            - --serverstransport.insecureskipverify=true
+            - --log.filePath=/data/traefik.log
+        networks: 
+            - frontend_traefik
+        ports:
+            - 80:80 # HTTP
+            - 443:443 # HTTPS
+        secrets:
+            - cloudflare_api_token
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro # docker provider
+            - ${PWD}/traefik:/homecontroller # file provider
+            - ${PWD}/data/traefik:/data # certificates & logs
+        environment:
+            - PROXY_DOMAIN # used in dynamic configuration (file provider)
+            - PROXY_LOCAL_DISKSTATION # used in dynamic configuration (file provider)
+            - PROXY_WEBSTATION_SUBDOMAIN=${PROXY_WEBSTATION_SUBDOMAIN:-www}
+            - CLOUDFLARE_DNS_API_TOKEN_FILE=/run/secrets/cloudflare_api_token
+        labels:
+            # IP Whitelist
+            - traefik.http.middlewares.traefik-ipwhitelist.ipwhitelist.sourcerange=${PROXY_WHITELIST:-10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+            # Dashboard
+            - traefik.enable=true
+            - traefik.http.routers.traefik.entrypoints=websecure
+            - traefik.http.routers.traefik.rule=Host(`traefik.${PROXY_DOMAIN}`)
+            - traefik.http.routers.traefik.service=api@internal
+            - traefik.http.routers.traefik.middlewares=traefik-ipwhitelist
+            # wildcard certificates
+            - traefik.http.routers.traefik.tls=true
+            - traefik.http.routers.traefik.tls.certresolver=cloudflare
+            - traefik.http.routers.traefik.tls.domains[0].main=*.${PROXY_DOMAIN}
+            # default cert
+            - traefik.tls.stores.default.defaultgeneratedcert.resolver=cloudflare
+            - traefik.tls.stores.default.defaultgeneratedcert.domain.main=${PROXY_DOMAIN}
+            - traefik.tls.stores.default.defaultgeneratedcert.domain.sans=*.${PROXY_DOMAIN}

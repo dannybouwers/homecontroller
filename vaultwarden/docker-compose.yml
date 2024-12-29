@@ -1,0 +1,48 @@
+secrets:
+    vaultwarden_admin_token:
+        file: ${PWD}/secrets/vaultwarden_admin_token
+    google_smtp_pass:
+        file: ${PWD}/secrets/google_smtp_pass
+    
+networks: 
+    frontend_traefik:
+        name: frontend_traefik
+
+services:
+    vaultwarden:
+        hostname: vaultwarden
+        container_name: vaultwarden
+        image: vaultwarden/server:1.32.7
+        restart: unless-stopped
+        user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        networks:
+            - frontend_traefik
+        environment:
+            - WEBSOCKET_ENABLED=true  # Enable WebSocket notifications.
+            - SIGNUPS_ALLOWED=false # Disable registration of new users
+            - DOMAIN=https://vaultwarden.${PROXY_DOMAIN}
+            # Enable mail via Google
+            - SMTP_HOST=smtp.gmail.com
+            - SMTP_FROM=${GOOGLE_EMAIL}
+            - SMTP_PORT=465
+            - SMTP_SECURITY=force_tls
+            - SMTP_USERNAME=${GOOGLE_EMAIL}
+        secrets:
+            - google_smtp_pass
+            - vaultwarden_admin_token
+        volumes:
+            - ${PWD}/data/vaultwarden/data:/data
+            - ${PWD}/vaultwarden/init.sh:/etc/vaultwarden.sh # script to set sensitive data via Docker secrets
+        labels:
+            - traefik.enable=true
+            # Entry Point for UI
+            - traefik.http.routers.vaultwarden-ui.service=vaultwarden-ui
+            - traefik.http.routers.vaultwarden-ui.rule=Host(`vaultwarden.${PROXY_DOMAIN}`)
+            - traefik.http.routers.vaultwarden-ui.entrypoints=websecure
+            - traefik.http.services.vaultwarden-ui.loadbalancer.server.port=80
+            # Entry Point for Admin (with IP Whitelist)
+            - traefik.http.routers.vaultwarden-admin.service=vaultwarden-admin
+            - traefik.http.routers.vaultwarden-admin.rule=Host(`vaultwarden.${PROXY_DOMAIN}`) && PathPrefix(`/admin`)
+            - traefik.http.routers.vaultwarden-admin.entrypoints=websecure
+            - traefik.http.routers.vaultwarden-admin.middlewares=traefik-ipwhitelist
+            - traefik.http.services.vaultwarden-admin.loadbalancer.server.port=80

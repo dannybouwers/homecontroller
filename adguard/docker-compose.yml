@@ -1,0 +1,26 @@
+networks: 
+    frontend_traefik:
+        name: frontend_traefik
+
+services:
+    adguard:
+        hostname: adguard
+        container_name: adguard
+        image: adguard/adguardhome:v0.107.55
+        restart: unless-stopped
+        # user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
+        networks: 
+            - frontend_traefik
+        ports:
+            - 53:53/tcp # plain DNS
+            - 53:53/udp # plain DNS
+        volumes:
+            - ${PWD}/data/adguard/work:/opt/adguardhome/work
+            - ${PWD}/data/adguard/conf:/opt/adguardhome/conf
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.adguard.rule=Host(`adguard.${PROXY_DOMAIN}`)
+            - traefik.http.routers.adguard.entrypoints=websecure
+            - traefik.http.routers.adguard.middlewares=traefik-ipwhitelist
+            - traefik.http.services.adguard.loadbalancer.server.port=3000
+            - traefik.http.services.adguard.loadbalancer.server.scheme=http
