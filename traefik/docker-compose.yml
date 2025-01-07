@@ -9,7 +9,7 @@ networks:
 services:
     traefik:
         hostname: traefik
-        image: traefik:v3.2.3
+        image: traefik:v3.3.0
         restart: unless-stopped
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
