@@ -16,7 +16,7 @@ networks:
 
 services:
     fireflyiii-core:
-        image: fireflyiii/core:version-6.2.6
+        image: fireflyiii/core:version-6.2.7
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:
@@ -74,7 +74,7 @@ services:
             - ${PWD}/data/fireflyiii/db:/var/lib/postgresql/data
 
     fireflyiii-importer:
-        image: fireflyiii/data-importer:version-1.6.0
+        image: fireflyiii/data-importer:version-1.6.1
         hostname: fireflyiii-importer
         restart: unless-stopped
         container_name: fireflyiii-importer
