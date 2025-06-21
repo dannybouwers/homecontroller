@@ -16,7 +16,7 @@ networks:
 
 services:
     fireflyiii-core:
-        image: fireflyiii/core:version-6.2.17
+        image: fireflyiii/core:version-6.2.18
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:
