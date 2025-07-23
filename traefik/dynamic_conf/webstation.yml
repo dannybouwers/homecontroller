@@ -1,7 +1,7 @@
 http:
   # Route requests for webstation, photo station, mail station etc.
   routers:
-    webstation:
+    synology-webstation:
       entryPoints:
         - websecure
       service: webstation

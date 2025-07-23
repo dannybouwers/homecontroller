@@ -4,3 +4,4 @@ include:
   - ${PWD}/fireflyiii/docker-compose.yml
   - ${PWD}/unifi/docker-compose.yml
   - ${PWD}/vaultwarden/docker-compose.yml
+  - ${PWD}/trala/docker-compose.yml

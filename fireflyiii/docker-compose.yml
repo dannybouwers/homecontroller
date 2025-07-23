@@ -52,11 +52,11 @@ services:
             - MAIL_ENCRYPTION=tls
         labels:
             - traefik.enable=true
-            - traefik.http.routers.firefly-core.rule=Host(`firefly.${PROXY_DOMAIN}`)
-            - traefik.http.routers.firefly-core.entrypoints=websecure
-            - traefik.http.routers.firefly-core.middlewares=traefik-ipwhitelist
-            - traefik.http.services.firefly-core.loadbalancer.server.port=8080
-            - traefik.http.services.firefly-core.loadbalancer.server.scheme=http
+            - traefik.http.routers.firefly-iii.rule=Host(`firefly.${PROXY_DOMAIN}`)
+            - traefik.http.routers.firefly-iii.entrypoints=websecure
+            - traefik.http.routers.firefly-iii.middlewares=traefik-ipwhitelist
+            - traefik.http.services.fireflyiii-core.loadbalancer.server.port=8080
+            - traefik.http.services.fireflyiii-core.loadbalancer.server.scheme=http
             - traefik.docker.network=frontend_traefik
 
     fireflyiii-db:
@@ -103,8 +103,8 @@ services:
             - traefik.http.routers.firefly-importer.rule=Host(`firefly-importer.${PROXY_DOMAIN}`)
             - traefik.http.routers.firefly-importer.entrypoints=websecure
             - traefik.http.routers.firefly-importer.middlewares=traefik-ipwhitelist
-            - traefik.http.services.firefly-importer.loadbalancer.server.port=8080
-            - traefik.http.services.firefly-importer.loadbalancer.server.scheme=http
+            - traefik.http.services.fireflyiii-importer.loadbalancer.server.port=8080
+            - traefik.http.services.fireflyiii-importer.loadbalancer.server.scheme=http
             - traefik.docker.network=frontend_traefik
 
     fireflyiii-cron:

@@ -1,0 +1,22 @@
+networks: 
+  frontend_traefik:
+    name: frontend_traefik
+
+services:
+  trala:
+    hostname: trala
+    container_name: trala
+    image: ghcr.io/dannybouwers/trala:0.2.0
+    # build: /home/dockeruser/trala
+    restart: unless-stopped
+    networks: 
+      - frontend_traefik
+    environment:
+      - TRAEFIK_API_HOST=traefik:8080
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.trala.rule=Host(`dashboard.${PROXY_DOMAIN}`)
+      - traefik.http.routers.trala.entrypoints=websecure
+      - traefik.http.routers.trala.middlewares=traefik-ipwhitelist
+      - traefik.http.services.trala.loadbalancer.server.port=8080
+      - traefik.http.services.trala.loadbalancer.server.scheme=http

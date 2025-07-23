@@ -14,7 +14,8 @@ services:
         container_name: traefik
         user: ${DOCKER_USER_ID:-1000}:${DOCKER_GROUP_ID:-1000}
         command:
-            - --api # Secure API
+            # - --api # Secure API
+            - --api.insecure=true
             - --providers.docker # Tells Traefik to listen to docker
             - --providers.docker.network=frontend_traefik # Tells Traefik to use the docker network called traefik
             - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
