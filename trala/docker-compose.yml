@@ -6,7 +6,7 @@ services:
   trala:
     hostname: trala
     container_name: trala
-    image: ghcr.io/dannybouwers/trala:0.2.3
+    image: ghcr.io/dannybouwers/trala:0.2.4
     # build: /home/dockeruser/trala
     restart: unless-stopped
     networks: 
