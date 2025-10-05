@@ -2,6 +2,7 @@
 mkdir -p ${PWD}/secrets
 
 mkdir -p ${PWD}/data/traefik
+mkdir -p ${PWD}/user/traefik/file_provider
 
 # mkdir -p ${PWD}/data/unifi/config
 mkdir -p ${PWD}/data/unifi/app

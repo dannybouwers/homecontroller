@@ -19,8 +19,8 @@ services:
             - --providers.docker # Tells Traefik to listen to docker
             - --providers.docker.network=frontend_traefik # Tells Traefik to use the docker network called traefik
             - --providers.docker.exposedbydefault=false # Do not add docker services by default, but using "traefik.enable=true"
-            - --providers.file.directory=/homecontroller/dynamic_conf # File provider
-            # HHTP entry with redirect to HTTPS
+            - --providers.file.directory=/user/file_provider # File provider
+            # HTTP entry with redirect to HTTPS
             - --entrypoints.web.address=:80
             - --entrypoints.web.http.redirections.entrypoint.to=websecure
             - --entrypoints.web.http.redirections.entrypoint.scheme=https
@@ -50,7 +50,7 @@ services:
             - cloudflare_api_token
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro # docker provider
-            - ${PWD}/traefik:/homecontroller # file provider
+            - ${PWD}/user/traefik:/user # file provider
             - ${PWD}/data/traefik:/data # certificates & logs
         environment:
             - PROXY_DOMAIN # used in dynamic configuration (file provider)

@@ -1,0 +1,27 @@
+http:
+  # Add a router for Synology DSM
+  routers:
+    synology:
+      entryPoints:
+        - websecure
+      service: dsm
+      rule: Host(`nas.{{env "PROXY_DOMAIN"}}`)
+      tls:
+        certresolver: cloudflare
+        domains:
+          - main: '*.{{env "PROXY_DOMAIN"}}'
+      middlewares: "redirect-mail-photostation"
+
+  # rewrite for photo&mail station
+  middlewares:
+    redirect-mail-photostation:
+      redirectRegex:
+        regex: '^https://nas.{{env "PROXY_DOMAIN"}}/(mail|photo)(/.*)?'
+        replacement: 'http://{{env "PROXY_WEBSTATION_SUBDOMAIN"}}.{{env "PROXY_DOMAIN"}}/${1}${2}'
+
+  # Add the service for Synology DSM
+  services:
+    dsm:
+      loadBalancer:
+        servers:
+          - url: https://{{env "PROXY_LOCAL_DISKSTATION"}}:5001/

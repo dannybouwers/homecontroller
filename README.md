@@ -15,15 +15,10 @@ Personal project to move all tools on my home server to Docker. [Alpine Linux](h
 
 ## Usage
 
-### (Optional) configure Alpine Linux
-
-[Configure Alpine Linux](https://github.com/dannybouwers/homecontroller/wiki/Configure-Alpine-Linux)
-
-### (Optional) Host security
-
-[Setup fail2ban](https://github.com/dannybouwers/homecontroller/wiki/Setup-fail2ban)
-
-[Setup firewall](https://github.com/dannybouwers/homecontroller/wiki/Setup-firewall)
+### Prerequisites
+ - Docker
+ - Docker Compose
+ - curl
 
 ### Create a folder
 
@@ -80,19 +75,13 @@ Test if everything is running using:
 . ./test.sh
 ```
 
+### (Optional) file providers
+
+To proxy services hosted by other instances (e.g. non-docker), add dynamic Traefik configuration to the folder `./user/traefik/file_provider` which is created by the setup script. Some examples can be found in [traefik](traefik).
+
 ### Access services
 
-If DNS is set up correctly, the services can be reached (and configured) using these urls:
-
-- Traefik: https://traefik.example.com
-- Unifi Controller: https://unifi.example.com
-- AdGuard Home: https://adguard.example.com
-- Vaultwarden: https://vaultwarden.example.com
-- Vaultwarden admin: https://vaultwarden.example.com/admin
-- Firefly III: https://firefly.example.com
-- Firefly III Data Importer: https://firefly-importer.example.com
-- Synology DSM: https://nas.example.com
-- Synology webstation: https://PROXY_WEBSTATION_SUBDOMAIN.example.com
+If DNS is set up correctly, a dashbaord with all your servives can be found at `dashboard.${PROXY_DOMAIN}`.
 
 ## todo
 

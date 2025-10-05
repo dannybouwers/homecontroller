@@ -1,0 +1,22 @@
+http:
+  # Route requests for Home Assistant
+  routers:
+    proxmox:
+      entryPoints:
+        - websecure
+      service: pve
+      rule: Host(`proxmox.{{env "PROXY_DOMAIN"}}`)
+      tls:
+        certresolver: cloudflare
+        domains:
+          - main: '*.{{env "PROXY_DOMAIN"}}'
+
+  # Add a service for Home Assistant
+  services:
+    pve:
+      loadBalancer:
+        servers:
+          # configuration via .env
+          - url: https://{{env "PROXY_LOCAL_PVE"}}:8006/
+          # pverdcoded IP address
+          #- url: https://your.pve.ip.address:8006/

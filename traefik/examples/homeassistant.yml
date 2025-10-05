@@ -1,0 +1,22 @@
+http:
+  # Route requests for Home Assistant
+  routers:
+    homeassistant:
+      entryPoints:
+        - websecure
+      service: ha
+      rule: Host(`homeassistant.{{env "PROXY_DOMAIN"}}`)
+      tls:
+        certresolver: cloudflare
+        domains:
+          - main: '*.{{env "PROXY_DOMAIN"}}'
+
+  # Add a service for Home Assistant
+  services:
+    ha:
+      loadBalancer:
+        servers:
+          # configuration via .env
+          - url: http://{{env "PROXY_LOCAL_HOMEASSISTANT"}}:8123/
+          # hardcoded IP address
+          #- url: http://your.ha.ip.address:8123/

@@ -17,6 +17,8 @@ jobs:
       contents: |
         **
         !README*
+        !**/README*
+        !**/examples/**
         !LICENSE
         !.*
         !.*/**
