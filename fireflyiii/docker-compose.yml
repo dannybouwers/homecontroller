@@ -16,7 +16,7 @@ networks:
 
 services:
     fireflyiii-core:
-        image: fireflyiii/core:version-6.4.7
+        image: fireflyiii/core:version-6.4.8
         hostname: fireflyiii-core
         container_name: fireflyiii-core
         networks:
@@ -60,7 +60,7 @@ services:
             - traefik.docker.network=frontend_traefik
 
     fireflyiii-db:
-        image: postgres:16.10
+        image: postgres:16.11
         hostname: fireflyiii-db
         restart: unless-stopped
         container_name: fireflyiii-db
