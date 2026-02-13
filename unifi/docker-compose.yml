@@ -10,7 +10,7 @@ networks:
 
 services:
     unifi:
-        image: linuxserver/unifi-network-application:10.1.84
+        image: linuxserver/unifi-network-application:10.1.85
         hostname: unifi
         container_name: unifi
         secrets:
