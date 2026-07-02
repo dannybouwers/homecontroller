@@ -20,7 +20,7 @@ stages:
   jobs:
   - job: RunRenovate
     displayName: 'Run Renovate'
-    container: swissgrc/azure-pipelines-renovate:latest
+    container: ghcr.io/swissgrc/azure-pipelines-hermes:latest
 
     steps:
     - bash: |
