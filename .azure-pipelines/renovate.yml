@@ -1,12 +1,12 @@
 trigger: none
 
-schedules:
-  - cron: "0 3 * * *"
-    displayName: "Every day at 03:00"
-    branches:
-      include:
-        - main
-    always: true
+# schedules:
+#   - cron: "0 3 * * *"
+#     displayName: "Every day at 03:00"
+#     branches:
+#       include:
+#         - main
+#     always: true
 
 pool:
   name: Default
