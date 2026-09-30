@@ -1,0 +1,7 @@
+version: 4.0
+
+environment:
+  traefik:
+    instances:
+      - name: Homecontroller
+        api_host: http://traefik:8080

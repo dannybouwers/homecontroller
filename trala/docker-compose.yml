@@ -11,8 +11,9 @@ services:
     restart: unless-stopped
     networks: 
       - frontend_traefik
-    environment:
-      - TRAEFIK_API_HOST=traefik:8080
+    volumes:
+      # Configuration file (optional but recommended)
+      - ${PWD}/user/trala/configuration.yml:/config/configuration.yml:ro
     labels:
       - traefik.enable=true
       - traefik.http.routers.trala.rule=Host(`dashboard.${PROXY_DOMAIN}`)

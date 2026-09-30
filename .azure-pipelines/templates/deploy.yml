@@ -56,6 +56,6 @@ jobs:
     inputs:
       sshEndpoint: 'Homecontroller ${{ parameters.environment }}'
       runOptions: 'commands'
-      commands: 'cd ./${{ parameters.stack }} && docker compose up -d 2>&1'
+      commands: 'cd ./${{ parameters.stack }} && docker compose up -d --force-recreate 2>&1'
       failOnStdErr: false
       readyTimeout: '20000'

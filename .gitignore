@@ -4,3 +4,4 @@ data
 secrets
 user
 .env
+.kilo

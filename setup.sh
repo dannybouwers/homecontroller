@@ -24,3 +24,5 @@ mkdir -p ${PWD}/data/fireflyiii/db
 test -f ${PWD}/secrets/fireflyiii_db_pass && echo 'Secret fireflyiii_db_pass already exists' || echo -n $(head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 32) > ${PWD}/secrets/fireflyiii_db_pass
 test -f ${PWD}/secrets/fireflyiii_app_key && echo 'Secret fireflyiii_app_key already exists' || echo -n $(head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 32) > ${PWD}/secrets/fireflyiii_app_key
 test -f ${PWD}/secrets/fireflyiii_static_cron_token && echo 'Secret fireflyiii_static_cron_token already exists' || echo -n $(head /dev/urandom | LC_ALL=C tr -dc A-Za-z0-9 | head -c 32) > ${PWD}/secrets/fireflyiii_static_cron_token
+
+. ./trala/setup.sh ${PWD}
