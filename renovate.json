@@ -31,6 +31,10 @@
     {
       "matchPackageNames": ["mongo"],
       "allowedVersions": "<=4.4"
+    },
+    {
+      "matchPackageNames": ["linuxserver/unifi-network-application"],
+      "allowedVersions": "<=10.6"
     }
   ]
 }
